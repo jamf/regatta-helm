@@ -1,0 +1,13 @@
+{{- if and .Values.serviceMonitorEnabled .Values.prometheusRules.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ template "regatta.name" . }}
+  labels:
+    {{- include "regatta.labels" . | nindent 4 }}
+    role: alert-rules
+    prometheus: k8s
+spec:
+  groups:
+  {{- .Values.prometheusRules.groups | toYaml | nindent 2 }}
+{{- end -}}

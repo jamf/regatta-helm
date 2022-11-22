@@ -1,0 +1,33 @@
+{{ if eq "certificate" .Values.api.tls.mode }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ template "regatta.name" . }}-api
+  labels:
+    {{- include "regatta.labels" . | nindent 4 }}
+spec:
+  commonName: {{ template "regatta.name" . }}.{{ .Release.Namespace }}.svc
+  dnsNames:
+  - "{{ template "regatta.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.api.port }}"
+  - "{{ template "regatta.name" . }}.{{ .Release.Namespace }}.svc.cluster.local"
+  - "{{ template "regatta.name" . }}.{{ .Release.Namespace }}:{{ .Values.api.port }}"
+  - "{{ template "regatta.name" . }}.{{ .Release.Namespace }}"
+  - "{{ template "regatta.name" . }}:{{ .Values.api.port }}"
+  - "{{ template "regatta.name" . }}"
+  - "{{ template "regatta.name" . }}-api.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.api.port }}"
+  - "{{ template "regatta.name" . }}-api.{{ .Release.Namespace }}.svc.cluster.local"
+  - "{{ template "regatta.name" . }}-api.{{ .Release.Namespace }}:{{ .Values.api.port }}"
+  - "{{ template "regatta.name" . }}-api.{{ .Release.Namespace }}"
+  - "{{ template "regatta.name" . }}-api:{{ .Values.api.port }}"
+  - "{{ template "regatta.name" . }}-api"
+{{- if .Values.api.externalLoadBalancer.enabled }}
+  - "{{ .Values.api.externalLoadBalancer.externalDomain }}:{{ .Values.api.port }}"
+  - {{ .Values.api.externalLoadBalancer.externalDomain }}
+{{- end }}
+  {{- with .Values.api.tls.issuerRef }}
+  issuerRef:
+    {{- . | toYaml | nindent 4 }}
+  {{- end }}
+  secretName: {{ template "regatta.name" . }}-api-cert
+{{ end }}

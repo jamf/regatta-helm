@@ -1,0 +1,204 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "regatta.name" . }}
+  labels:
+    {{- include "regatta.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      {{- include "regatta.selectorLabels" . | nindent 6 }}
+  serviceName: {{ template "regatta.name" . }}
+  template:
+    metadata:
+      labels:
+        {{- include "regatta.selectorLabels" . | nindent 8 }}
+        {{- with .Values.additionalPodLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ template "regatta.name" . }}
+      {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      containers:
+      - name: {{ template "regatta.name" . }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.imagePullPolicy }}
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        {{- if .Values.maintenance.server.enabled }}
+        - name: TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "regatta.name" . }}-maintenance-token
+              key: token
+        {{- end }}
+        command:
+        - "bash"
+        - "-c"
+        - >-
+          NODE_ID=$(expr $(echo "${POD_NAME: -1}") + 1) &&
+          regatta {{ .Values.mode }} \
+            --api.address=0.0.0.0:{{ .Values.api.port }} \
+            --api.cert-filename=/api-cert/tls.crt \
+            --api.key-filename=/api-cert/tls.key \
+            --rest.address=0.0.0.0:{{ .Values.metricsPort }} \
+            --raft.address=$(POD_NAME).{{ template "regatta.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:5012 \
+            --raft.listen-address=0.0.0.0:5012 \
+            --raft.node-id=${NODE_ID} \
+            --raft.node-host-dir=/data/raft \
+            --raft.initial-members={{ .Values.raft.initialMembers }} \
+            --raft.state-machine-dir=/data/state-machine \
+            --raft.rtt={{ .Values.raft.rtt }} \
+            --raft.election-rtt={{ .Values.raft.electionRTT }} \
+            --raft.heartbeat-rtt={{ .Values.raft.heartbeatRTT }} \
+            --raft.snapshot-entries={{ .Values.raft.snapshotEntries | int64 }} \
+            --raft.compaction-overhead={{ .Values.raft.compactionOverhead | int64 }} \
+            --storage.block-cache-size={{ .Values.storage.blockCacheSize | int64 }} \
+          {{- if .Values.reflectionAPI.enabled }}
+            --api.reflection-api \
+          {{- end }}
+          {{- if eq .Values.mode "leader" }}
+            --tables.names={{ .Values.tables }} \
+            --replication.enabled={{ .Values.replication.server.enabled }} \
+            --replication.address=0.0.0.0:{{ .Values.replication.server.port }} \
+          {{- if .Values.kafka.enabled }}
+            --kafka.brokers={{ .Values.kafka.brokers }} \
+            --kafka.check-topics={{ .Values.kafka.checkTopics }} \
+            --kafka.timeout={{ .Values.kafka.dialerTimeout }} \
+            --kafka.group-id={{ .Values.kafka.groupID }} \
+            --kafka.topics={{ .Values.kafka.topics }} \
+            --kafka.tls={{ .Values.kafka.tls.enabled }} \
+          {{- if .Values.kafka.tls.enabled }}
+            --kafka.server-cert-filename=/kafka-cert/ca.crt \
+            --kafka.client-cert-filename=/kafka-cert/tls.crt \
+            --kafka.client-key-filename=/kafka-cert/tls.key \
+          {{- end }}
+          {{- end }}
+          {{- end }}
+          {{- if eq .Values.mode "follower" }}
+            --replication.leader-address={{ .Values.replication.leaderAddress }} \
+            --replication.max-snapshot-recv-bytes-per-second={{ .Values.replication.maxSnapshotRecvBytesPerSecond | int64 }} \
+            --replication.log-rpc-timeout={{ .Values.replication.logRpcTimeout }} \
+          {{- end }}
+            --maintenance.enabled={{ .Values.maintenance.server.enabled }} \
+          {{- if .Values.maintenance.server.enabled }}
+            --maintenance.token=$(TOKEN) \
+            --maintenance.address=0.0.0.0:{{ .Values.maintenance.server.port }} \
+            --maintenance.cert-filename=/maintenance-cert/tls.crt \
+            --maintenance.key-filename=/maintenance-cert/tls.key \
+          {{- end }}
+            --replication.cert-filename=/replication-cert/tls.crt \
+            --replication.key-filename=/replication-cert/tls.key \
+            --replication.ca-filename=/replication-cert/ca.crt \
+          {{- if .Values.replication.logCacheSize }}
+            --replication.log-cache-size={{ .Values.replication.logCacheSize }} \
+          {{- end }}
+            --experimental.tanlogdb={{ .Values.experimental.tanlogdb }}
+        ports:
+        - name: https
+          containerPort: {{ .Values.api.port }}
+        - name: http-metrics
+          containerPort: {{ .Values.metricsPort }}
+        {{- if and .Values.replication.server.enabled (eq .Values.mode "leader") }}
+        - name: https-repl
+          containerPort: {{ .Values.replication.server.port }}
+        {{- end }}
+        {{- if .Values.maintenance.server.enabled }}
+        - name: https-mainten
+          containerPort: {{ .Values.maintenance.server.port }}
+        {{- end }}
+        {{- with .Values.resources }}
+        resources: {{- toYaml . | nindent 10 }}
+        {{- end }}
+        startupProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.metricsPort }}
+          initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+          successThreshold: {{ .Values.startupProbe.successThreshold }}
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.metricsPort }}
+          initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+          successThreshold: {{ .Values.readinessProbe.successThreshold }}
+        volumeMounts:
+        - mountPath: /dragonboat-soft-settings.json
+          name: config
+          subPath: dragonboat-soft-settings.json
+        - mountPath: /api-cert
+          name: api-cert
+        {{- if and .Values.kafka.enabled .Values.kafka.tls.enabled }}
+        - mountPath: /kafka-cert
+          name: kafka-cert
+        {{- end }}
+        - mountPath: /replication-cert
+          name: replication-cert
+        {{- if .Values.maintenance.server.enabled }}
+        - mountPath: /maintenance-cert
+          name: maintenance-cert
+        {{- end }}
+        - mountPath: /data
+          name: data
+      volumes:
+      - name: config
+        configMap:
+          name: {{ template "regatta.name" . }}-config
+      - name: api-cert
+        secret:
+          defaultMode: 420
+          secretName: {{ template "regatta.name" . }}-api-cert
+      {{- if and .Values.kafka.enabled .Values.kafka.tls.enabled }}
+      - name: kafka-cert
+        secret:
+          defaultMode: 420
+          secretName: {{ template "regatta.name" . }}-kafka-cert
+      {{- end }}
+      - name: replication-cert
+        secret:
+          defaultMode: 420
+          secretName: {{ template "regatta.name" . }}-replication-cert
+      {{- if .Values.maintenance.server.enabled }}
+      - name: maintenance-cert
+        secret:
+          defaultMode: 420
+          secretName: {{ template "regatta.name" . }}-maintenance-cert
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations: {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.podAntiAffinity.enabled }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: {{ .Values.podAntiAffinity.topologyKey }}
+            labelSelector:
+              matchLabels:
+                {{- include "regatta.selectorLabels" $ | nindent 16 }}
+      {{- end }}
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: data
+    spec:
+    {{- .Values.persistentVolumeClaim.spec | toYaml | nindent 6 }}

@@ -1,0 +1,21 @@
+{{ if and .Values.replication.server.enabled (eq .Values.mode "leader") }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "regatta.name" . }}-replication
+  labels:
+    {{- include "regatta.labels" . | nindent 4 }}
+  {{ with .Values.replication.server.serviceAnnotations }}
+  annotations:
+    {{ . | toYaml | nindent 4 }}
+  {{ end }}
+spec:
+  type: LoadBalancer
+  selector:
+    {{- include "regatta.selectorLabels" . | nindent 6 }}
+  ports:
+  - name: https-repl
+    targetPort: https-repl
+    port: {{ .Values.replication.server.port }}
+{{ end }}

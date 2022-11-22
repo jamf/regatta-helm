@@ -1,0 +1,8 @@
+apiVersion: v2
+name: regatta
+description: |
+  Regatta is a distributed key-value store. Regatta is designed as easy to deploy, kubernetes friendly with emphasis 
+  on high read throughput and low operational cost.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

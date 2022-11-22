@@ -1,0 +1,25 @@
+{{- if .Values.api.externalLoadBalancer.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "regatta.name" . }}-external
+  labels:
+    {{- include "regatta.labels" . | nindent 4 }}
+  {{ with .Values.api.externalLoadBalancer.annotations }}
+  annotations:
+  {{ . | toYaml | nindent 4 }}
+  {{ end }}
+spec:
+  type: LoadBalancer
+  selector:
+    {{- include "regatta.selectorLabels" . | nindent 6 }}
+  ports:
+  - name: https
+    protocol: TCP
+    targetPort: https
+    port: 443
+  {{ with .Values.api.externalLoadBalancer.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+  {{ . | toYaml | nindent 2 }}
+  {{- end }}
+{{- end }}

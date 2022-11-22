@@ -1,0 +1,24 @@
+{{ if eq "certificate" .Values.replication.tls.mode }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ template "regatta.name" . }}-replication
+  labels:
+    {{- include "regatta.labels" . | nindent 4 }}
+spec:
+  commonName: "{{ template "regatta.name" . }}-replication.{{ .Release.Namespace }}.svc"
+  dnsNames:
+  - "{{ template "regatta.name" . }}-replication.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.replication.server.port }}"
+  - "{{ template "regatta.name" . }}-replication.{{ .Release.Namespace }}.svc.cluster.local"
+  - "{{ template "regatta.name" . }}-replication.{{ .Release.Namespace }}:{{ .Values.replication.server.port }}"
+  - "{{ template "regatta.name" . }}-replication.{{ .Release.Namespace }}"
+  - "{{ template "regatta.name" . }}-replication:{{ .Values.replication.server.port }}"
+  - "{{ template "regatta.name" . }}-replication"
+  - "{{ .Values.replication.server.externalDomain }}:{{ .Values.replication.server.port }}"
+  - {{ .Values.replication.server.externalDomain }}
+  {{- with .Values.replication.tls.issuerRef }}
+  issuerRef:
+    {{- . | toYaml | nindent 4 }}
+  {{- end }}
+  secretName: {{ template "regatta.name" . }}-replication-cert
+{{ end }}

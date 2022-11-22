@@ -1,0 +1,22 @@
+{{- if and (.Values.maintenance.server.enabled) (eq "certificate" .Values.maintenance.server.tls.mode) }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ template "regatta.name" . }}-maintenance
+  labels:
+    {{- include "regatta.labels" . | nindent 4 }}
+spec:
+  commonName: "{{ template "regatta.name" . }}-maintenance.{{ .Release.Namespace }}.svc"
+  dnsNames:
+  - "{{ template "regatta.name" . }}-maintenance.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.maintenance.server.port }}"
+  - "{{ template "regatta.name" . }}-maintenance.{{ .Release.Namespace }}.svc.cluster.local"
+  - "{{ template "regatta.name" . }}-maintenance.{{ .Release.Namespace }}:{{ .Values.maintenance.server.port }}"
+  - "{{ template "regatta.name" . }}-maintenance.{{ .Release.Namespace }}"
+  - "{{ template "regatta.name" . }}-maintenance:{{ .Values.maintenance.server.port }}"
+  - "{{ template "regatta.name" . }}-maintenance"
+  {{- with .Values.maintenance.server.tls.issuerRef }}
+  issuerRef:
+    {{ . | toYaml | nindent 4 }}
+  {{- end }}
+  secretName: {{ template "regatta.name" . }}-maintenance-cert
+{{- end }}

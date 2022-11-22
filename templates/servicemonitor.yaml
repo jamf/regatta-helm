@@ -1,0 +1,19 @@
+{{- if .Values.serviceMonitorEnabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "regatta.name" . }}
+  labels:
+    {{- include "regatta.labels" . | nindent 4 }}
+spec:
+  jobLabel: app
+  selector:
+    matchLabels:
+      app: {{ template "regatta.name" . }}
+  namespaceSelector:
+    matchNames:
+    -  {{ .Release.Namespace }}
+  endpoints:
+  - port: http-metrics
+    interval: 30s
+{{ end }}

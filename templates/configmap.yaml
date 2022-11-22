@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "regatta.name" . }}-config
+  labels:
+    {{- include "regatta.labels" . | nindent 4 }}
+data:
+  dragonboat-soft-settings.json: |
+    {{- .Values.dragonboatSoftSettings | nindent 4 }}
