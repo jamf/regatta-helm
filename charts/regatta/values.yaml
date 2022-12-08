@@ -1,29 +1,31 @@
+## Regatta configuration
+
 # -- image: configuration
-#   Note: Use overrides with caution since other regatta versions might not be compatible with this helm chart!
+#   Note: Use overrides with caution since other Regatta versions might not be compatible with this helm chart!
 image:
-  # -- repository: default image repository
-  repository: 371487436103.dkr.ecr.eu-west-1.amazonaws.com/regatta
-  # -- imagePullPolicy: docu: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+  # -- repository: Default image repository
+  repository: ghcr.io/jamf/regatta
+  # -- imagePullPolicy: ref: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
   imagePullPolicy: IfNotPresent
-  # -- tag: override to use different image version
+  # -- tag: Override to use different image version
   tag: 0.1.0
 
-# -- imagePullSecrets: for the regatta image
+# -- imagePullSecrets: For the Regatta image
 imagePullSecrets: []
 
-# -- replicas: defines number of regatta replicas
-# Notice: This value must match the number of raft initial members `raft.initialMembers`.
+# -- replicas: Defines number of Regatta replicas
+#   Note: This value must match the number of raft initial members `raft.initialMembers`.
 replicas: 1
 
-# -- podDisruptionBudget: specifies the pod disruption budget
-#   docu: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+# -- podDisruptionBudget: Specifies the pod disruption budget
+## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
 podDisruptionBudget:
-  # -- enables: if true, the pdb object is created
+  # -- enabled: If true, the pdb object is created
   enabled: false
-  # -- minAvailable: sets the minAvailable field of the pdb object
+  # -- minAvailable: Sets the minAvailable field of the pdb object
   minAvailable: 2
 
-# -- resources: define the regatta pods resources
+# -- resources: Define the resources of the pods
 resources: {}
   # requests:
   #   cpu: 1
@@ -32,8 +34,8 @@ resources: {}
   #   cpu: 2
   #   memory: 8Gi
 
-# -- startupProbe: defines the startupProbe for the regatta container
-#   docu: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes
+# -- startupProbe: Defines the startupProbe for the Regatta container
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes
 startupProbe:
   initialDelaySeconds: 90
   periodSeconds: 60
@@ -41,8 +43,8 @@ startupProbe:
   failureThreshold: 3
   successThreshold: 1
 
-# -- startupProbe: defines the readinessProbe for the regatta container
-#   docu: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes
+# -- startupProbe: Defines the readinessProbe for the Regatta container
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes
 readinessProbe:
   initialDelaySeconds: 5
   periodSeconds: 30
@@ -50,43 +52,41 @@ readinessProbe:
   failureThreshold: 3
   successThreshold: 1
 
-# -- priorityClassName: defines the priorityClassName of the regatta pods
-#   leave empty string if you don't want to use this feature
-#   docu: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/
+# -- priorityClassName: Defines the priorityClassName of the Regatta pods.
+#   Leave empty string if you don't want to use this feature.
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/
 priorityClassName: ""
 
-# -- tolerations: defines tolerations for the regatta pods
-#   docu: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+# -- tolerations: Defines tolerations for the Regatta pods
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
 tolerations: []
 #- key: "key1"
 #  operator: "Equal"
 #  value: "value1"
 #  effect: "NoSchedule"
 
-# -- nodeSelector: map of nodeSelector labels for the regatta pods
-#   docu: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+# -- nodeSelector: Map of nodeSelector labels for the Regatta pods
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
 nodeSelector: {}
 #  nodeLabel: value
 
-# -- podAntiAffinity: settings of regatta pods anti-affinity
-#   docu: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
+# -- podAntiAffinity: Settings of Regatta pods anti-affinity
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
 podAntiAffinity:
-  # -- enabled: enable or disable the pod anti-affinity
+  # -- enabled: Enable or disable the pod anti-affinity
   enabled: false
-  # -- topologyKey: use to override the topologyKey value
+  # -- topologyKey: Use to override the topologyKey value
   topologyKey: kubernetes.io/hostname
 
-# -- additionalPodLabels: optional map of additional pod labels
+# -- additionalPodLabels: Optional map of additional pod labels
 additionalPodLabels: {}
-#  key: value
 
-# -- podAnnotations: optional map of pod annotations
+# -- podAnnotations: Optional map of pod annotations
 podAnnotations: {}
-#  key: value
 
-# -- persistentVolumeClaim: allows definition of the persistentVolumeClaim.spec of the regatta StatefulSet
+# -- persistentVolumeClaim: Allows definition of the persistentVolumeClaim.spec of the Regatta StatefulSet
 persistentVolumeClaim:
-  # -- spec: the full content of the persistentVolumeClaim.spec
+  # -- spec: The full content of the persistentVolumeClaim.spec
   spec:
     accessModes:
     - ReadWriteOnce
@@ -94,13 +94,13 @@ persistentVolumeClaim:
       requests:
         storage: 10Gi
 
-# -- api: regatta main grpc api configuration
+# -- api: Regatta main gRPC API configuration
 api:
-  # -- port: main grpc api port
+  # -- port: gRPC API port
   port: 8443
 
   tls:
-    # -- tlsMode:
+    # -- mode:
     #    May be one of:
     #    - certificate: the certificate is generated by `cert-manager.io/v1/Certificate` object
     #    - plaintext: enter `cert` and `key` content directly into values
@@ -117,33 +117,33 @@ api:
     #         tls.key: Y2xpZW50LWtleQo=
     mode: plaintext
 
-    # -- issuerRef: issuerRef configuration that is passed to the Certificate object
+    # -- issuerRef: IssuerRef configuration that is passed to the Certificate object
     #   Note: applicable only if `mode: certificate`
     issuerRef: {}
     # Example issuerRef configuration:
     #   kind: ClusterIssuer
     #   name: issuer-name
 
-    # -- cert: tls cert in plaintext
-    #   Note: applicable only if `mode: plaintext`
+    # -- cert: TLS cert in plaintext
+    # Note: applicable only if `mode: plaintext`
     cert: |
       plaintext server certificate
 
-    # -- key: tls key in plaintext
-    #   Note: applicable only if `mode: plaintext`
+    # -- key: TLS key in plaintext
+    # Note: applicable only if `mode: plaintext`
     key: |
       plaintext server certificate key
 
-  # -- externalLoadBalancer: if enabled, the Service of type LoadBalancer is created
-  #   docu: https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer
+  # -- externalLoadBalancer: If enabled, the Service of type LoadBalancer is created
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer
   externalLoadBalancer:
-    # -- enables: true/false
+    # -- enabled: true/false
     enabled: false
 
-    # -- externalDomain: external regatta API domain name
+    # -- externalDomain: External Regatta API domain name
     externalDomain: regatta.example.com
 
-    # -- annotations: the service annotations
+    # -- annotations: Service annotations
     annotations: {}
     # Example annotations for K8S cluster running in AWS:
     #
@@ -152,37 +152,38 @@ api:
     #  service.beta.kubernetes.io/aws-load-balancer-backend-protocol: ssl
 
     # -- loadBalancerSourceRanges: external access whitelist, available on AWS only
-    #   docu: https://kubernetes.io/docs/concepts/services-networking/service/#aws-nlb-support
+    ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#aws-nlb-support
     loadBalancerSourceRanges: {}
     # - 0.0.0.0/0
 
-# -- metricsPort: regatta metrics port
+# -- metricsPort: Regatta metrics port
 metricsPort: 8079
 
-# -- mode: regatta mode
-#   can be one of leader or follower
+# -- mode: Regatta mode
+#   Can be either leader or follower.
 mode: leader
 
-# -- replication: regatta replication setup
+# -- replication: Regatta replication setup
 replication:
-  # -- server: the replication server may be used when regatta is in the leader mode (`mode: leader`)
+  # -- server: The replication server may be used when Regatta is in the leader mode (`mode: leader`).
+  #   Follower Regatta replicates data from this server.
   server:
-    # -- enabled: enables the replication server
+    # -- enabled: Enables the replication server
     enabled: true
 
-    # -- port: replication server port
+    # -- port: Replication server port
     port: 8444
 
     # -- externalDomain:
     externalDomain: "leader.regatta.example.com"
 
-    # -- serviceAnnotations: replication server LoadBalancer service annotations
+    # -- serviceAnnotations: Replication server LoadBalancer service annotations
     serviceAnnotations: {}
     # external-dns.alpha.kubernetes.io/hostname: leader.regatta.example.com
     # service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "900"
 
   tls:
-    # -- tlsMode:
+    # -- mode:
     #    May be one of:
     #    - certificate: the certificate is generated by `cert-manager.io/v1/Certificate` object
     #    - plaintext: enter `cert` and `key` content directly into values
@@ -200,32 +201,32 @@ replication:
     mode: plaintext
 
     # -- issuerRef: issuerRef configuration that is passed to the Certificate object
-    #   Note: applicable only if `mode: certificate`
+    # Note: applicable only if `mode: certificate`
     issuerRef: {}
     # Example issuerRef configuration:
     #   kind: ClusterIssuer
     #   name: issuer-name
 
-    # -- cert: tls cert in plaintext
-    #   Note: applicable only if `mode: plaintext`
+    # -- cert: TLS certificate in plaintext
+    # Note: Applicable only if `mode: plaintext`
     cert: |
       plaintext server certificate
 
-    # -- cert: ca in plaintext
-    #   Note: applicable only if `mode: plaintext`
+    # -- cert: CA in plaintext
+    # Note: Applicable only if `mode: plaintext`
     ca: |
       plaintext server ca
 
-    # -- key: tls key in plaintext
-    #   Note: applicable only if `mode: plaintext`
+    # -- key: TLS key in plaintext
+    # Note: Applicable only if `mode: plaintext`
     key: |
       plaintext server certificate key
 
-  # -- leaderAddress: the leader address to replicate from
-  #   Note: applicable only if the regatta mode is follower (`mode: follower`)
+  # -- leaderAddress: The address of the leader to replicate from
+  # Note: Applicable only if the Regatta mode is follower (`mode: follower`)
   leaderAddress: "leader.regatta.example.com"
 
-  # -- maxSnapshotRecvBytesPerSecond: Max bytes per second received by the snapshot API client,
+  # -- maxSnapshotRecvBytesPerSecond: Maximum number of bytes received per second by the snapshot API client,
   #   default value 0 means unlimited.
   maxSnapshotRecvBytesPerSecond: 0
 
@@ -270,7 +271,7 @@ maintenance:
     port: 8445
 
     tls:
-      # -- tlsMode:
+      # -- mode:
       #    May be one of:
       #    - certificate: the certificate is generated by `cert-manager.io/v1/Certificate` object
       #    - plaintext: enter `cert` and `key` content directly into values
@@ -288,24 +289,24 @@ maintenance:
       mode: plaintext
 
       # -- issuerRef: issuerRef configuration that is passed to the Certificate object
-      #   Note: applicable only if `mode: certificate`
+      #   Note: Applicable only if `mode: certificate`
       issuerRef: { }
       # Example issuerRef configuration:
       #   kind: ClusterIssuer
       #   name: issuer-name
 
-      # -- cert: tls cert in plaintext
-      #   Note: applicable only if `mode: plaintext`
+      # -- cert: TLS certificate in plaintext
+      #   Note: Applicable only if `mode: plaintext`
       cert: |
         plaintext server certificate
 
-      # -- key: tls key in plaintext
-      #   Note: applicable only if `mode: plaintext`
+      # -- key: TLS key in plaintext
+      # Note: Applicable only if `mode: plaintext`
       key: |
         plaintext server certificate key
 
-  # -- backup: Controls the creation of the backup CronJob that uses the regatta maintenance API
-  #   Note: the `maintenance.server.enabled` must be set to `true`
+  # -- backup: Controls the creation of the backup CronJob that uses the Regatta maintenance API
+  # Note: the `maintenance.server.enabled` must be set to `true`
   backup:
     # -- enabled: Enable the backup CronJob
     #   Note: the maintenance server must be enabled
@@ -314,35 +315,35 @@ maintenance:
     successfulJobsHistoryLimit: 4
     # -- failedJobsHistoryLimit: CronJob config field
     failedJobsHistoryLimit: 2
-    # -- schedule: cron expression defining how often the backup is executed
+    # -- schedule: Cron expression defining how often the backup is executed
     schedule: "0 */4 * * *"
-    # -- bucket: address of the s3 bucket where to upload backup
+    # -- bucket: Address of the s3 bucket where to upload backup
     bucket: "s3-bucket-name"
 
-# -- kafka: kafka client configuration
-#   Note: kafka client available ony if the `mode: leader`
+# -- kafka: Kafka client configuration
+# Note: Kafka client available ony if Regatta is in the leader mode (`mode: leader`)
 kafka:
-  # -- enabled: enables kafka client
+  # -- enabled: Enables Kafka client
   enabled: false
 
-  # -- brokers: list of kafka brokers
+  # -- brokers: The list of Kafka brokers
   brokers: ""
 
-  # -- checkTopics: if true checks the configured topics for existence
+  # -- checkTopics: Checks the configured topics for existence if set to true
   checkTopics: false
 
   # -- dialerTimeout: Kafka dialer timeout
   dialerTimeout: 10s
 
-  # -- groupID: kafka consumer group ID
+  # -- groupID: Kafka consumer group ID
   groupID: ""
 
-  # -- topics: comma-separated list of kafka topics to consume
+  # -- topics: Comma-separated list of Kafka topics to consume
   topics: ""
 
-  # -- tls: kafka client tls configuration
+  # -- tls: Kafka client TLS configuration
   tls:
-    # -- enabled: enables kafka client tls
+    # -- enabled: Enables kafka client TLS
     enabled: false
     
     # -- secretKind
@@ -388,41 +389,41 @@ kafka:
     clientKey: |
       client-key
 
-# -- tables: comma separated list of regatta tables
+# -- tables: Comma separated list of Regatta tables
 tables: table-1,table-2
 
-# -- raft: raft configuration
+# -- raft: Raft configuration
 raft:
-  # -- initialMembers: Raft cluster initial members defines a mapping of node IDs to their respective raft address.
+  # -- initialMembers: Raft cluster initial members defines a mapping of node IDs to their respective Raft address.
   #   The node ID must be Integer >= 1. Example for the initial 3 node cluster setup on the localhost:
-  #      "1=127.0.0.1:5012,2=127.0.0.1:5013,3=127.0.0.1:5014"
+  #     "1=127.0.0.1:5012,2=127.0.0.1:5013,3=127.0.0.1:5014"
   initialMembers: "1=regatta-0.regatta.regatta.svc.cluster.local:5012"
 
-  # -- rtt: defines the average Round Trip Time (RTT) between two NodeHost instances.
+  # -- rtt: Defines the average Round Trip Time (RTT) between two NodeHost instances.
   #   Such an RTT interval is internally used as a logical clock tick, Raft heartbeat and election intervals
   #   are both defined in terms of how many such RTT intervals. Note that RTTMillisecond is the combined delays
   #   between two NodeHost instances including all delays caused by network transmission,
   #   delays caused by NodeHost queuing and processing.
-  #   In golang duration string (https://pkg.go.dev/maze.io/x/duration#ParseDuration).
+  #   Specified as Go's duration string (https://pkg.go.dev/maze.io/x/duration#ParseDuration).
   rtt: 50ms
 
   # -- snapshotEntries: SnapshotEntries defines how often the state machine should be snapshotted automatically.
   #   It is defined in terms of the number of applied Raft log entries.
   snapshotEntries: 10000
 
-  # -- compactionOverhead: defines the number of most recent entries to keep after each Raft log compaction.
+  # -- compactionOverhead: Defines the number of most recent entries to keep after each Raft log compaction.
   #   Raft log compaction is performed automatically every time when a snapshot is created.
   compactionOverhead: 5000
 
   # TODO: revise raft.rtt
-  # -- heartbeatRTT: is the number of message RTT between heartbeats. Message RTT is defined by raft.rtt.
+  # -- heartbeatRTT: The number of message RTT between heartbeats. Message RTT is defined by raft.rtt.
   #   The Raft paper suggest the heartbeat interval to be close to the average RTT between nodes.
   #   As an example, assuming raft.rtt is 100 millisecond, to set the heartbeat interval to be every 200 milliseconds,
   #   then heartbeatRTT should be set to 2.
   heartbeatRTT: 4
 
   # TODO: revise raft.rtt
-  # -- electionRTT: is the minimum number of message RTT between elections. Message RTT is defined by raft.rtt.
+  # -- electionRTT: The minimum number of message RTT between elections. Message RTT is defined by raft.rtt.
   #   The Raft paper suggests it to be a magnitude greater than heartbeatRTT, which is the interval between two heartbeats.
   #   In Raft, the actual interval between elections is randomized to be between electionRTT and 2 * electionRTT.
   #   As an example, assuming raft.rtt is 100 millisecond, to set the election interval to be 1 second,
@@ -437,25 +438,25 @@ dragonboatSoftSettings: |
     "MaxConcurrentStreamingSnapshot": 1
   }
 
-# -- storage: storage configuration
+# -- storage: Storage configuration
 storage:
-  # -- blockCacheSize: Shared block cache size in bytes, the cache is used to hold uncompressed blocks of data in memory.
+  # -- blockCacheSize: Shared block cache size in bytes. The cache is used to hold uncompressed blocks of data in memory
   blockCacheSize: 796917760
 
-# -- experimental: experimental features
+# -- experimental: Experimental features
 experimental:
-  # -- tanlogdb: Whether experimental LogDB implementation Tan is used in-place of Pebble based one.
+  # -- tanlogdb: Whether experimental LogDB implementation Tan is used in-place of Pebble based one
   tanlogdb: false
 
-# -- serviceMonitorEnabled: if true the ServiceMonitor object is created
+# -- serviceMonitorEnabled: ServiceMonitor object is created if set to true
 serviceMonitorEnabled: false
 
-# -- prometheusRules: defines the PrometheusRule object
+# -- prometheusRules: Defines the PrometheusRule object
 prometheusRules:
-  # -- enables: PrometheusRule object created if true
+  # -- enabled: PrometheusRule object created if true
   enabled: false
 
-  # -- groups: list of the PrometheusRule groups
+  # -- groups: List of the PrometheusRule groups
   groups: []
   #  Example groups:
   #
