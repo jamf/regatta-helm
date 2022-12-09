@@ -5,7 +5,6 @@ nameOverride: "" # default: `"regatta"`
 # -- fullnameOverride: String to fully override `"regatta.fullname"`
 fullnameOverride: ""
 
-
 # Image configuration
 #   Note: Use overrides with caution since other Regatta versions might not be compatible with this helm chart!
 image:
