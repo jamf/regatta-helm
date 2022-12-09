@@ -22,7 +22,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
-      serviceAccountName: {{ template "regatta.name" . }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ template "regatta.serviceAccountName" . }}
+      {{- end }}
       {{- with .Values.priorityClassName }}
       priorityClassName: {{ . }}
       {{- end }}

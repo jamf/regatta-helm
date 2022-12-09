@@ -1,5 +1,11 @@
 ## Regatta configuration
 
+# -- nameOverride: Provide a name in place of `regatta`
+nameOverride: "" # default: `"regatta"`
+# -- fullnameOverride: String to fully override `"regatta.fullname"`
+fullnameOverride: ""
+
+
 # Image configuration
 #   Note: Use overrides with caution since other Regatta versions might not be compatible with this helm chart!
 image:
@@ -93,6 +99,13 @@ persistentVolumeClaim:
     resources:
       requests:
         storage: 10Gi
+
+# ServiceAccount configuration
+serviceAccount:
+  # -- create: Create the ServiceAccount for regatta
+  create: true
+  # -- name: ServiceAccount name override
+  name: "" # default: `"regatta.fullname"`
 
 # Regatta main gRPC API configuration
 api:
