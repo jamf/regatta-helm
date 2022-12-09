@@ -64,7 +64,7 @@ spec:
             --raft.snapshot-entries={{ .Values.raft.snapshotEntries | int64 }} \
             --raft.compaction-overhead={{ .Values.raft.compactionOverhead | int64 }} \
             --storage.block-cache-size={{ .Values.storage.blockCacheSize | int64 }} \
-          {{- if .Values.reflectionAPI.enabled }}
+          {{- if .Values.reflectionAPIEnabled }}
             --api.reflection-api \
           {{- end }}
           {{- if eq .Values.mode "leader" }}
