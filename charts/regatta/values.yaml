@@ -1,6 +1,6 @@
 ## Regatta configuration
 
-# -- Image configuration
+# Image configuration
 #   Note: Use overrides with caution since other Regatta versions might not be compatible with this helm chart!
 image:
   # -- repository: Default image repository
@@ -17,7 +17,7 @@ imagePullSecrets: []
 #   Note: This value must match the number of raft initial members `raft.initialMembers`.
 replicas: 1
 
-# -- Specifies the pod disruption budget
+# Specifies the pod disruption budget
 ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
 podDisruptionBudget:
   # -- enabled: If true, the pdb object is created
@@ -70,7 +70,7 @@ tolerations: []
 nodeSelector: {}
 #  nodeLabel: value
 
-# -- Settings of Regatta pods anti-affinity
+# Settings of Regatta pods anti-affinity
 ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
 podAntiAffinity:
   # -- enabled: Enable or disable the pod anti-affinity
@@ -84,7 +84,7 @@ additionalPodLabels: {}
 # -- podAnnotations: Optional map of pod annotations
 podAnnotations: {}
 
-# -- Allows definition of the persistentVolumeClaim.spec of the Regatta StatefulSet
+# Allows definition of the persistentVolumeClaim.spec of the Regatta StatefulSet
 persistentVolumeClaim:
   # -- spec: The full content of the persistentVolumeClaim.spec
   spec:
@@ -94,7 +94,7 @@ persistentVolumeClaim:
       requests:
         storage: 10Gi
 
-# -- Regatta main gRPC API configuration
+# Regatta main gRPC API configuration
 api:
   # -- port: gRPC API port
   port: 8443
@@ -163,7 +163,7 @@ metricsPort: 8079
 #   Can be either leader or follower.
 mode: leader
 
-# -- Regatta replication setup
+# Regatta replication setup
 replication:
   # -- server: The replication server may be used when Regatta is in the leader mode (`mode: leader`).
   #   Follower Regatta replicates data from this server.
@@ -237,7 +237,7 @@ reflectionAPI:
   # -- enabled: Whether reflection API is provided. Should be false on in production.
   enabled: false
 
-# -- Maintenance API configuration
+# Maintenance API configuration
 maintenance:
   # -- secretKind
   #   May be one of:
@@ -320,7 +320,7 @@ maintenance:
     # -- bucket: Address of the s3 bucket where to upload backup
     bucket: "s3-bucket-name"
 
-# -- Kafka client configuration
+# Kafka client configuration
 # Note: Kafka client available ony if Regatta is in the leader mode (`mode: leader`)
 kafka:
   # -- enabled: Enables Kafka client
@@ -392,7 +392,7 @@ kafka:
 # -- tables: Comma separated list of Regatta tables
 tables: table-1,table-2
 
-# -- Raft configuration
+# Raft configuration
 raft:
   # -- initialMembers: Raft cluster initial members defines a mapping of node IDs to their respective Raft address.
   #   The node ID must be Integer >= 1. Example for the initial 3 node cluster setup on the localhost:
@@ -430,7 +430,7 @@ raft:
   #   then electionRTT should be set to 10.
   electionRTT: 100
 
-# -- dragonboatSoftSettings: TODO
+# -- dragonboatSoftSettings: ref: https://github.com/lni/dragonboat/blob/v3.3.6/internal/settings/soft.go#L27
 dragonboatSoftSettings: |
   {
     "TaskBatchSize": 128,
@@ -438,12 +438,12 @@ dragonboatSoftSettings: |
     "MaxConcurrentStreamingSnapshot": 1
   }
 
-# -- Storage configuration
+# Storage configuration
 storage:
   # -- blockCacheSize: Shared block cache size in bytes. The cache is used to hold uncompressed blocks of data in memory
   blockCacheSize: 796917760
 
-# -- Experimental features
+# Experimental features
 experimental:
   # -- tanlogdb: Whether experimental LogDB implementation Tan is used in-place of Pebble based one
   tanlogdb: false
@@ -451,7 +451,7 @@ experimental:
 # -- serviceMonitorEnabled: ServiceMonitor object is created if set to true
 serviceMonitorEnabled: false
 
-# -- Defines the PrometheusRule object
+# Defines the PrometheusRule object
 prometheusRules:
   # -- enabled: PrometheusRule object created if true
   enabled: false
