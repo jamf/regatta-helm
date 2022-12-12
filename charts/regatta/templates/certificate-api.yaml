@@ -31,3 +31,4 @@ spec:
   {{- end }}
   secretName: {{ template "regatta.name" . }}-api-cert
 {{ end }}
+  {{
