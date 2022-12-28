@@ -4,8 +4,8 @@ description: |
   Regatta is a distributed key-value store. Regatta is designed as easy to deploy, kubernetes friendly with emphasis 
   on high read throughput and low operational cost.
 maintainers:
-  - name: "Regatta Developers"
-    email: "regatta@jamf.com"
+- name: "Regatta Developers"
+  email: "regatta@jamf.com"
 type: application
 version: 0.1.0
 appVersion: "0.1.0"
