@@ -60,3 +60,12 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create list of initial Raft members
+*/}}
+{{- define "initialMembers" -}}
+{{- range $i, $e := until (int .Values.replicas) -}}{{ if ne $i 0 }},{{ end }}{{ add $i 1 }}=regatta-{{ $i }}.regatta.regatta.svc.cluster.local:5012
+{{- end -}}
+{{- end }}
+

@@ -58,7 +58,7 @@ spec:
             --raft.listen-address=0.0.0.0:5012 \
             --raft.node-id=${NODE_ID} \
             --raft.node-host-dir=/data/raft \
-            --raft.initial-members={{ .Values.raft.initialMembers }} \
+            --raft.initial-members={{ template "initialMembers" . }} \
             --raft.state-machine-dir=/data/state-machine \
             --raft.rtt={{ .Values.raft.rtt }} \
             --raft.election-rtt={{ .Values.raft.electionRTT }} \

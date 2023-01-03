@@ -406,11 +406,6 @@ tables: table-1,table-2
 
 # Raft configuration
 raft:
-  # -- initialMembers: Raft cluster initial members defines a mapping of node IDs to their respective Raft address.
-  #   The node ID must be Integer >= 1. Example for the initial 3 node cluster setup on the localhost:
-  #     "1=127.0.0.1:5012,2=127.0.0.1:5013,3=127.0.0.1:5014"
-  initialMembers: "1=regatta-0.regatta.regatta.svc.cluster.local:5012"
-
   # -- rtt: Defines the average Round Trip Time (RTT) between two NodeHost instances.
   #   Such an RTT interval is internally used as a logical clock tick, Raft heartbeat and election intervals
   #   are both defined in terms of how many such RTT intervals. Note that RTTMillisecond is the combined delays
@@ -427,14 +422,12 @@ raft:
   #   Raft log compaction is performed automatically every time when a snapshot is created.
   compactionOverhead: 5000
 
-  # TODO: revise raft.rtt
   # -- heartbeatRTT: The number of message RTT between heartbeats. Message RTT is defined by raft.rtt.
   #   The Raft paper suggest the heartbeat interval to be close to the average RTT between nodes.
   #   As an example, assuming raft.rtt is 100 millisecond, to set the heartbeat interval to be every 200 milliseconds,
   #   then heartbeatRTT should be set to 2.
   heartbeatRTT: 4
 
-  # TODO: revise raft.rtt
   # -- electionRTT: The minimum number of message RTT between elections. Message RTT is defined by raft.rtt.
   #   The Raft paper suggests it to be a magnitude greater than heartbeatRTT, which is the interval between two heartbeats.
   #   In Raft, the actual interval between elections is randomized to be between electionRTT and 2 * electionRTT.
