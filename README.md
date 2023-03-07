@@ -8,3 +8,5 @@ The chart repository can be added by running the following command:
 helm repo add regatta https://jamf.github.io/regatta-helm
 ```
 
+See the [documentation](https://engineering.jamf.com/regatta) for more information about Regatta.
+
