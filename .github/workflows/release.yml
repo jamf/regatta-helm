@@ -16,14 +16,6 @@ jobs:
       with:
         fetch-depth: 0
 
-    - uses: dorny/paths-filter@v2.11.1
-      id: filter
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        filters: |
-          charts:
-            - 'charts/regatta/Chart.yaml'
-
     - name: Configure Git
       run: |
         git config user.name "$GITHUB_ACTOR"
@@ -35,6 +27,7 @@ jobs:
         version: v3.10.0
 
     - name: Run chart-releaser
-      uses: helm/chart-releaser-action@v1.4.1
+      uses: helm/chart-releaser-action@v1.5.0
       env:
         CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        CR_SKIP_EXISTING: true
