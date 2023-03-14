@@ -165,7 +165,7 @@ api:
 
     # -- loadBalancerSourceRanges: external access whitelist, available on AWS only
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#aws-nlb-support
-    loadBalancerSourceRanges: {}
+    loadBalancerSourceRanges: []
     # - 0.0.0.0/0
 
 # -- metricsPort: Regatta metrics port
@@ -302,7 +302,7 @@ maintenance:
 
       # -- issuerRef: issuerRef configuration that is passed to the Certificate object
       #   Note: Applicable only if `mode: certificate`
-      issuerRef: { }
+      issuerRef: {}
       # Example issuerRef configuration:
       #   kind: ClusterIssuer
       #   name: issuer-name
