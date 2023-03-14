@@ -73,19 +73,6 @@ spec:
             --tables.names={{ .Values.tables }} \
             --replication.enabled={{ .Values.replication.server.enabled }} \
             --replication.address=0.0.0.0:{{ .Values.replication.server.port }} \
-          {{- if .Values.kafka.enabled }}
-            --kafka.brokers={{ .Values.kafka.brokers }} \
-            --kafka.check-topics={{ .Values.kafka.checkTopics }} \
-            --kafka.timeout={{ .Values.kafka.dialerTimeout }} \
-            --kafka.group-id={{ .Values.kafka.groupID }} \
-            --kafka.topics={{ .Values.kafka.topics }} \
-            --kafka.tls={{ .Values.kafka.tls.enabled }} \
-          {{- if .Values.kafka.tls.enabled }}
-            --kafka.server-cert-filename=/kafka-cert/ca.crt \
-            --kafka.client-cert-filename=/kafka-cert/tls.crt \
-            --kafka.client-key-filename=/kafka-cert/tls.key \
-          {{- end }}
-          {{- end }}
           {{- end }}
           {{- if eq .Values.mode "follower" }}
             --replication.leader-address={{ .Values.replication.leaderAddress }} \
@@ -146,10 +133,6 @@ spec:
           subPath: dragonboat-soft-settings.json
         - mountPath: /api-cert
           name: api-cert
-        {{- if and .Values.kafka.enabled .Values.kafka.tls.enabled }}
-        - mountPath: /kafka-cert
-          name: kafka-cert
-        {{- end }}
         - mountPath: /replication-cert
           name: replication-cert
         {{- if .Values.maintenance.server.enabled }}
@@ -166,12 +149,6 @@ spec:
         secret:
           defaultMode: 420
           secretName: {{ template "regatta.name" . }}-api-cert
-      {{- if and .Values.kafka.enabled .Values.kafka.tls.enabled }}
-      - name: kafka-cert
-        secret:
-          defaultMode: 420
-          secretName: {{ template "regatta.name" . }}-kafka-cert
-      {{- end }}
       - name: replication-cert
         secret:
           defaultMode: 420
