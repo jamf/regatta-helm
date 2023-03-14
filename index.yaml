@@ -3,6 +3,26 @@ entries:
   regatta:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2023-03-14T14:41:11.168165081Z"
+    description: 'Regatta is a distributed key-value store. Regatta is designed as
+      easy to deploy, kubernetes friendly with emphasis  on high read throughput and
+      low operational cost. '
+    digest: 08e7f3371cffb9d29462e02a2ff439bd1b070ff882adc58dd4575c9c5c520a1f
+    home: https://engineering.jamf.com/regatta
+    keywords:
+    - Regatta
+    - database
+    - key-value
+    maintainers:
+    - email: regatta@jamf.com
+      name: Regatta Developers
+    name: regatta
+    type: application
+    urls:
+    - https://github.com/jamf/regatta-helm/releases/download/regatta-0.1.1/regatta-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2022-12-09T14:30:29.831419962Z"
     description: 'Regatta is a distributed key-value store. Regatta is designed as
       easy to deploy, kubernetes friendly with emphasis  on high read throughput and
@@ -13,4 +33,4 @@ entries:
     urls:
     - https://github.com/jamf/regatta-helm/releases/download/regatta-0.1.0/regatta-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-09T14:30:29.831431462Z"
+generated: "2023-03-14T14:41:11.168176581Z"
