@@ -6,10 +6,10 @@ metadata:
   labels:
     {{- include "regatta.labels" . | nindent 4 }}
 spec:
-  jobLabel: app
+  jobLabel: app.kubernetes.io/name
   selector:
     matchLabels:
-      app: {{ template "regatta.name" . }}
+      app.kubernetes.io/name: {{ template "regatta.name" . }}
   namespaceSelector:
     matchNames:
     -  {{ .Release.Namespace }}
