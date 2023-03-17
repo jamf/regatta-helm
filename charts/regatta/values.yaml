@@ -13,7 +13,7 @@ image:
   # -- imagePullPolicy: ref: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
   imagePullPolicy: IfNotPresent
   # -- tag: Override to use different image version
-  tag: 0.1.0
+  tag: v0.1.0
 
 # -- imagePullSecrets: For the Regatta image
 imagePullSecrets: []
@@ -365,6 +365,20 @@ raft:
   #   As an example, assuming raft.rtt is 100 millisecond, to set the election interval to be 1 second,
   #   then electionRTT should be set to 10.
   electionRTT: 100
+
+  # -- maxInMemLogSize is the target size in bytes allowed for storing in memory Raft logs on each Raft node.
+  #   In memory Raft logs are the ones that have not been applied yet.
+  maxInMemLogSize: 6291456
+
+  # -- maxReceiveQueueSize is the maximum size in bytes of each receive queue. Once the maximum size is reached,
+  #   further replication messages will be dropped to restrict memory usage.
+  #   When set to 0, it means the queue size is unlimited.
+  maxRecvQueueSize: 0
+
+  # --  maxSendQueueSize is the maximum size in bytes of each send queue. Once the maximum size is reached,
+  #   further replication messages will be dropped to restrict memory usage.
+  #   When set to 0, it means the send queue size is unlimited.
+  maxSendQueueSize: 0
 
 # -- dragonboatSoftSettings: ref: https://github.com/lni/dragonboat/blob/v3.3.6/internal/settings/soft.go#L27
 dragonboatSoftSettings: |

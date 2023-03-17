@@ -65,6 +65,9 @@ spec:
             --raft.heartbeat-rtt={{ .Values.raft.heartbeatRTT }} \
             --raft.snapshot-entries={{ .Values.raft.snapshotEntries | int64 }} \
             --raft.compaction-overhead={{ .Values.raft.compactionOverhead | int64 }} \
+            --raft.max-in-mem-log-size={{ .Values.raft.maxInMemLogSize | int64 }} \
+            --raft.max-recv-queue-size={{ .Values.raft.maxRecvQueueSize | int64 }} \
+            --raft.max-send-queue-size={{ .Values.raft.maxSendQueueSize | int64 }} \
             --storage.block-cache-size={{ .Values.storage.blockCacheSize | int64 }} \
           {{- if .Values.reflectionAPI.enabled }}
             --api.reflection-api \
