@@ -1,0 +1,40 @@
+# Changelog
+
+## v0.1.5 (Unreleased)
+
+### Improvements
+
+* Added CHANGELOG.md.
+
+## v0.1.4
+
+### Improvements
+
+* Added auto-generated documentation.
+* Exposed flags `raft.maxInMemLogSize`, `raft.maxRecvQueueSize`, and `raft.maxSendQueueSize`.
+
+### Bugfixes
+
+* Fixed default image tag.
+
+## v0.1.3
+
+### Bugfixes
+
+* Fixed the `spec.jobLabel` and `spec.selector.matchLabels` in the service monitor object.
+
+## v0.1.2
+
+### Breaking changes
+
+* Removed `Values.kafka.*` values and flags.
+
+## v0.1.1
+
+### Bugfixes
+
+* Changed the type of `Values.api.externalLoadBalancer.loadBalancerSourceRanges` to a list.
+
+## v0.1.0
+
+This is the initial release of Regatta Helm Chart.
