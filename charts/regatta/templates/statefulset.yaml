@@ -49,51 +49,51 @@ spec:
         - "-c"
         - >-
           NODE_ID=$(expr $(echo "${POD_NAME: -1}") + 1) &&
-          regatta {{ .Values.mode }}
-            --api.address=0.0.0.0:{{ .Values.api.port }}
-            --api.cert-filename=/api-cert/tls.crt
-            --api.key-filename=/api-cert/tls.key
-            --rest.address=0.0.0.0:{{ .Values.metricsPort }}
-            --raft.address=$(POD_NAME).{{ template "regatta.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:5012
-            --raft.listen-address=0.0.0.0:5012
-            --raft.node-id=${NODE_ID}
-            --raft.node-host-dir=/data/raft
-            --raft.initial-members={{ template "initialMembers" . }}
-            --raft.state-machine-dir=/data/state-machine
-            --raft.rtt={{ .Values.raft.rtt }}
-            --raft.election-rtt={{ .Values.raft.electionRTT }}
-            --raft.heartbeat-rtt={{ .Values.raft.heartbeatRTT }}
-            --raft.snapshot-entries={{ .Values.raft.snapshotEntries | int64 }}
-            --raft.compaction-overhead={{ .Values.raft.compactionOverhead | int64 }}
-            --raft.max-in-mem-log-size={{ .Values.raft.maxInMemLogSize | int64 }}
-            --raft.max-recv-queue-size={{ .Values.raft.maxRecvQueueSize | int64 }}
-            --raft.max-send-queue-size={{ .Values.raft.maxSendQueueSize | int64 }}
-            --storage.block-cache-size={{ .Values.storage.blockCacheSize | int64 }}
+          regatta {{ .Values.mode }} \
+            --api.address=0.0.0.0:{{ .Values.api.port }} \
+            --api.cert-filename=/api-cert/tls.crt \
+            --api.key-filename=/api-cert/tls.key \
+            --rest.address=0.0.0.0:{{ .Values.metricsPort }} \
+            --raft.address=$(POD_NAME).{{ template "regatta.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:5012 \
+            --raft.listen-address=0.0.0.0:5012 \
+            --raft.node-id=${NODE_ID} \
+            --raft.node-host-dir=/data/raft \
+            --raft.initial-members={{ template "initialMembers" . }} \
+            --raft.state-machine-dir=/data/state-machine \
+            --raft.rtt={{ .Values.raft.rtt }} \
+            --raft.election-rtt={{ .Values.raft.electionRTT }} \
+            --raft.heartbeat-rtt={{ .Values.raft.heartbeatRTT }} \
+            --raft.snapshot-entries={{ .Values.raft.snapshotEntries | int64 }} \
+            --raft.compaction-overhead={{ .Values.raft.compactionOverhead | int64 }} \
+            --raft.max-in-mem-log-size={{ .Values.raft.maxInMemLogSize | int64 }} \
+            --raft.max-recv-queue-size={{ .Values.raft.maxRecvQueueSize | int64 }} \
+            --raft.max-send-queue-size={{ .Values.raft.maxSendQueueSize | int64 }} \
+            --storage.block-cache-size={{ .Values.storage.blockCacheSize | int64 }} \
           {{- if .Values.reflectionAPI.enabled }}
-            --api.reflection-api
+            --api.reflection-api \
           {{- end }}
           {{- if eq .Values.mode "leader" }}
-            --tables.names={{ .Values.tables }}
-            --replication.enabled={{ .Values.replication.server.enabled }}
-            --replication.address=0.0.0.0:{{ .Values.replication.server.port }}
+            --tables.names={{ .Values.tables }} \
+            --replication.enabled={{ .Values.replication.server.enabled }} \
+            --replication.address=0.0.0.0:{{ .Values.replication.server.port }} \
           {{- end }}
           {{- if eq .Values.mode "follower" }}
-            --replication.leader-address={{ .Values.replication.leaderAddress }}
-            --replication.max-snapshot-recv-bytes-per-second={{ .Values.replication.maxSnapshotRecvBytesPerSecond | int64 }}
-            --replication.log-rpc-timeout={{ .Values.replication.logRpcTimeout }}
+            --replication.leader-address={{ .Values.replication.leaderAddress }} \
+            --replication.max-snapshot-recv-bytes-per-second={{ .Values.replication.maxSnapshotRecvBytesPerSecond | int64 }} \
+            --replication.log-rpc-timeout={{ .Values.replication.logRpcTimeout }} \
           {{- end }}
-            --maintenance.enabled={{ .Values.maintenance.server.enabled }}
+            --maintenance.enabled={{ .Values.maintenance.server.enabled }} \
           {{- if .Values.maintenance.server.enabled }}
-            --maintenance.token=$(TOKEN)
-            --maintenance.address=0.0.0.0:{{ .Values.maintenance.server.port }}
-            --maintenance.cert-filename=/maintenance-cert/tls.crt
-            --maintenance.key-filename=/maintenance-cert/tls.key
+            --maintenance.token=$(TOKEN) \
+            --maintenance.address=0.0.0.0:{{ .Values.maintenance.server.port }} \
+            --maintenance.cert-filename=/maintenance-cert/tls.crt \
+            --maintenance.key-filename=/maintenance-cert/tls.key \
           {{- end }}
-            --replication.cert-filename=/replication-cert/tls.crt
-            --replication.key-filename=/replication-cert/tls.key
-            --replication.ca-filename=/replication-cert/ca.crt
+            --replication.cert-filename=/replication-cert/tls.crt \
+            --replication.key-filename=/replication-cert/tls.key \
+            --replication.ca-filename=/replication-cert/ca.crt \
           {{- if .Values.replication.logCacheSize }}
-            --replication.log-cache-size={{ .Values.replication.logCacheSize }}
+            --replication.log-cache-size={{ .Values.replication.logCacheSize }} \
           {{- end }}
             --experimental.tanlogdb={{ .Values.experimental.tanlogdb }}
         ports:
