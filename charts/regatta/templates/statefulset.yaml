@@ -116,20 +116,12 @@ spec:
           httpGet:
             path: /healthz
             port: {{ .Values.metricsPort }}
-          initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.startupProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
-          failureThreshold: {{ .Values.startupProbe.failureThreshold }}
-          successThreshold: {{ .Values.startupProbe.successThreshold }}
+          {{- toYaml .Values.startupProbe | nindent 10 }}
         readinessProbe:
           httpGet:
             path: /healthz
             port: {{ .Values.metricsPort }}
-          initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
-          failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
-          successThreshold: {{ .Values.readinessProbe.successThreshold }}
+          {{- toYaml .Values.readinessProbe | nindent 10 }}
         volumeMounts:
         - mountPath: /dragonboat-soft-settings.json
           name: config
