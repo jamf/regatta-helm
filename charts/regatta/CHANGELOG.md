@@ -1,10 +1,11 @@
 # Changelog
 
-## v0.1.5 (Unreleased)
+## v0.1.5
 
 ### Improvements
 
 * Added CHANGELOG.md.
+* Added support for PodDisruptionBudget policy/v1
 
 ## v0.1.4
 
