@@ -13,7 +13,7 @@ image:
   # -- imagePullPolicy: ref: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
   imagePullPolicy: IfNotPresent
   # -- tag: Override to use different image version
-  tag: v0.1.0
+  tag: v0.2.0-rc0
 
 # -- imagePullSecrets: For the Regatta image
 imagePullSecrets: []
@@ -106,6 +106,20 @@ serviceAccount:
   # -- name: ServiceAccount name override
   name: "" # default: `"regatta.fullname"`
 
+# Security context configuration
+# -- securityContext: The full content of the container.securityContext
+securityContext:
+  privileged: false
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+
+# Memberlist cluster discovery configuration
+cluster:
+  # -- port: Memberlist port for incoming cluster coordination comms.
+  port: 7432
+
 # Regatta main gRPC API configuration
 api:
   # -- port: gRPC API port
@@ -181,7 +195,7 @@ replication:
   #   Follower Regatta replicates data from this server.
   server:
     # -- enabled: Enables the replication server
-    enabled: true
+    enabled: false
 
     # -- port: Replication server port
     port: 8444
@@ -277,7 +291,7 @@ maintenance:
 
   server:
     # -- enabled: Maintenance API enabled
-    enabled: true
+    enabled: false
 
     # -- port: Port of maintenance server to listen on
     port: 8445
@@ -337,6 +351,10 @@ tables: table-1,table-2
 
 # Raft configuration
 raft:
+  # -- logdb: Defines the implementation to use for LogDB store. Options are pebble (legacy) or tan (default).
+  #    tan is less space efficient but significantly better at both memory and cpu usage.
+  #    This option currently cannot be changed after cluster is started without restoring data from snapshot or backup.
+  logdb: tan
   # -- rtt: Defines the average Round Trip Time (RTT) between two NodeHost instances.
   #   Such an RTT interval is internally used as a logical clock tick, Raft heartbeat and election intervals
   #   are both defined in terms of how many such RTT intervals. Note that RTTMillisecond is the combined delays
@@ -387,16 +405,19 @@ dragonboatSoftSettings: |
     "PerConnectionSendBufSize": 10485760,
     "MaxConcurrentStreamingSnapshot": 1
   }
+# Temp folder configuration
+temp:
+  # -- enabled: Set to true to enable tmp EmptyDir.
+  enabled: false
+  # -- medium: Set to `Memory` to place temp into tmpfs
+  medium:
+  # -- sizeLimit: Size constraint for temp file system
+  sizeLimit:
 
 # Storage configuration
 storage:
   # -- blockCacheSize: Shared block cache size in bytes. The cache is used to hold uncompressed blocks of data in memory
   blockCacheSize: 796917760
-
-# Experimental features
-experimental:
-  # -- tanlogdb: Whether experimental LogDB implementation Tan is used in-place of Pebble based one
-  tanlogdb: false
 
 # -- serviceMonitorEnabled: ServiceMonitor object is created if set to true
 serviceMonitorEnabled: false
