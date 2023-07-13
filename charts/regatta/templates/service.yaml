@@ -9,6 +9,9 @@ spec:
   selector:
     {{- include "regatta.selectorLabels" . | nindent 6 }}
   ports:
+  - name: cluster
+    targetPort: cluster
+    port: {{ .Values.cluster.port }}
   - name: https
     targetPort: https
     port: {{ .Values.api.port }}

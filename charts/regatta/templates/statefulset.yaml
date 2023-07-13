@@ -48,55 +48,60 @@ spec:
         - "bash"
         - "-c"
         - >-
-          NODE_ID=$(expr $(echo "${POD_NAME: -1}") + 1) &&
-          regatta {{ .Values.mode }} \
-            --api.address=0.0.0.0:{{ .Values.api.port }} \
-            --api.cert-filename=/api-cert/tls.crt \
-            --api.key-filename=/api-cert/tls.key \
-            --rest.address=0.0.0.0:{{ .Values.metricsPort }} \
-            --raft.address=$(POD_NAME).{{ template "regatta.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:5012 \
-            --raft.listen-address=0.0.0.0:5012 \
-            --raft.node-id=${NODE_ID} \
-            --raft.node-host-dir=/data/raft \
-            --raft.initial-members={{ template "initialMembers" . }} \
-            --raft.state-machine-dir=/data/state-machine \
-            --raft.rtt={{ .Values.raft.rtt }} \
-            --raft.election-rtt={{ .Values.raft.electionRTT }} \
-            --raft.heartbeat-rtt={{ .Values.raft.heartbeatRTT }} \
-            --raft.snapshot-entries={{ .Values.raft.snapshotEntries | int64 }} \
-            --raft.compaction-overhead={{ .Values.raft.compactionOverhead | int64 }} \
-            --raft.max-in-mem-log-size={{ .Values.raft.maxInMemLogSize | int64 }} \
-            --raft.max-recv-queue-size={{ .Values.raft.maxRecvQueueSize | int64 }} \
-            --raft.max-send-queue-size={{ .Values.raft.maxSendQueueSize | int64 }} \
-            --storage.block-cache-size={{ .Values.storage.blockCacheSize | int64 }} \
+          export NODE_ID=$(expr $(echo "${POD_NAME: -1}") + 1);
+          regatta {{ .Values.mode }}
+          --memberlist.address=0.0.0.0:{{ .Values.cluster.port }}
+          --memberlist.members=dnssrv+{{ template "regatta.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+          --api.address=0.0.0.0:{{ .Values.api.port }}
+          --api.cert-filename=/api-cert/tls.crt
+          --api.key-filename=/api-cert/tls.key
           {{- if .Values.reflectionAPI.enabled }}
-            --api.reflection-api \
+          --api.reflection-api
           {{- end }}
-          {{- if eq .Values.mode "leader" }}
-            --tables.names={{ .Values.tables }} \
-            --replication.enabled={{ .Values.replication.server.enabled }} \
-            --replication.address=0.0.0.0:{{ .Values.replication.server.port }} \
-          {{- end }}
-          {{- if eq .Values.mode "follower" }}
-            --replication.leader-address={{ .Values.replication.leaderAddress }} \
-            --replication.max-snapshot-recv-bytes-per-second={{ .Values.replication.maxSnapshotRecvBytesPerSecond | int64 }} \
-            --replication.log-rpc-timeout={{ .Values.replication.logRpcTimeout }} \
-          {{- end }}
-            --maintenance.enabled={{ .Values.maintenance.server.enabled }} \
-          {{- if .Values.maintenance.server.enabled }}
-            --maintenance.token=$(TOKEN) \
-            --maintenance.address=0.0.0.0:{{ .Values.maintenance.server.port }} \
-            --maintenance.cert-filename=/maintenance-cert/tls.crt \
-            --maintenance.key-filename=/maintenance-cert/tls.key \
-          {{- end }}
-            --replication.cert-filename=/replication-cert/tls.crt \
-            --replication.key-filename=/replication-cert/tls.key \
-            --replication.ca-filename=/replication-cert/ca.crt \
-          {{- if .Values.replication.logCacheSize }}
-            --replication.log-cache-size={{ .Values.replication.logCacheSize }} \
-          {{- end }}
-            --experimental.tanlogdb={{ .Values.experimental.tanlogdb }}
+          --rest.address=0.0.0.0:{{ .Values.metricsPort }}
+          --raft.logdb={{ .Values.raft.logdb }}
+          --raft.snapshot-recovery-type=checkpoint
+          --raft.address=$(POD_NAME).{{ template "regatta.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:5012
+          --raft.listen-address=0.0.0.0:5012
+          --raft.node-id=${NODE_ID}
+          --raft.node-host-dir=/data/raft
+          --raft.initial-members={{ template "regatta.initialMembers" . }}
+          --raft.state-machine-dir=/data/state-machine
+          --raft.rtt={{ .Values.raft.rtt }}
+          --raft.election-rtt={{ .Values.raft.electionRTT }}
+          --raft.heartbeat-rtt={{ .Values.raft.heartbeatRTT }}
+          --raft.snapshot-entries={{ .Values.raft.snapshotEntries | int64 }}
+          --raft.compaction-overhead={{ .Values.raft.compactionOverhead | int64 }}
+          --raft.max-in-mem-log-size={{ .Values.raft.maxInMemLogSize | int64 }}
+          --raft.max-recv-queue-size={{ .Values.raft.maxRecvQueueSize | int64 }}
+          --raft.max-send-queue-size={{ .Values.raft.maxSendQueueSize | int64 }}
+          --storage.block-cache-size={{ .Values.storage.blockCacheSize | int64 }}
+        {{- if eq .Values.mode "leader" }}
+          --tables.names={{ .Values.tables }}
+          --replication.enabled={{ .Values.replication.server.enabled }}
+          --replication.address=0.0.0.0:{{ .Values.replication.server.port }}
+        {{- end }}
+        {{- if eq .Values.mode "follower" }}
+          --replication.leader-address={{ .Values.replication.leaderAddress }}
+          --replication.max-snapshot-recv-bytes-per-second={{ .Values.replication.maxSnapshotRecvBytesPerSecond | int64 }}
+          --replication.log-rpc-timeout={{ .Values.replication.logRpcTimeout }}
+        {{- end }}
+          --replication.cert-filename=/replication-cert/tls.crt
+          --replication.key-filename=/replication-cert/tls.key
+          --replication.ca-filename=/replication-cert/ca.crt
+        {{- if .Values.replication.logCacheSize }}
+          --replication.log-cache-size={{ .Values.replication.logCacheSize }}
+        {{- end }}
+          --maintenance.enabled={{ .Values.maintenance.server.enabled }}
+        {{- if .Values.maintenance.server.enabled }}
+          --maintenance.token=$(TOKEN)
+          --maintenance.address=0.0.0.0:{{ .Values.maintenance.server.port }}
+          --maintenance.cert-filename=/maintenance-cert/tls.crt
+          --maintenance.key-filename=/maintenance-cert/tls.key
+        {{- end }}
         ports:
+        - name: cluster
+          containerPort: {{ .Values.cluster.port }}
         - name: https
           containerPort: {{ .Values.api.port }}
         - name: http-metrics
@@ -130,6 +135,9 @@ spec:
           timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
           failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
           successThreshold: {{ .Values.readinessProbe.successThreshold }}
+        {{- if .Values.securityContext }}
+        securityContext: {{ include "regatta.securityContext" . | nindent 12 }}
+        {{- end }}
         volumeMounts:
         - mountPath: /dragonboat-soft-settings.json
           name: config
@@ -144,7 +152,19 @@ spec:
         {{- end }}
         - mountPath: /data
           name: data
+        {{- if .Values.temp.enabled }}
+        - mountPath: /tmp
+          name: temp
+        {{- end }}
       volumes:
+      {{- if .Values.temp.enabled }}
+      - name: temp
+        emptyDir:
+          {{ with .Values.temp }}
+          medium: {{ .medium }}
+          sizeLimit: {{ .sizeLimit }}
+          {{- end }}
+      {{- end }}
       - name: config
         configMap:
           name: {{ template "regatta.name" . }}-config

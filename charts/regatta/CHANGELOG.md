@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.2.0
+
+### Improvements
+
+* Support of v0.2.x series of Regatta
+* Support for securityContext settings
+* Support for constraining temp usage
+
+
+### Bugfixes
+
+* Fixes the initialMembers setting when installing into namespace different from regatta.
+
 ## v0.1.5
 
 ### Improvements

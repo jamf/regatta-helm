@@ -64,8 +64,15 @@ Create the name of the service account to use
 {{/*
 Create list of initial Raft members
 */}}
-{{- define "initialMembers" -}}
-{{- range $i, $e := until (int .Values.replicas) -}}{{ if ne $i 0 }},{{ end }}{{ add $i 1 }}=regatta-{{ $i }}.regatta.regatta.svc.cluster.local:5012
+{{- define "regatta.initialMembers" -}}
+{{- range $i, $e := until (int .Values.replicas) -}}{{ if ne $i 0 }},{{ end }}{{ add $i 1 }}=regatta-{{ $i }}.{{ template "regatta.name" $ }}.{{ $.Release.Namespace }}.svc.cluster.local:5012
 {{- end -}}
 {{- end }}
 
+{{- define "regatta.securityContext" -}}
+{{- if semverCompare "<1.19" .Capabilities.KubeVersion.Version }}
+{{ toYaml (omit .Values.securityContext "seccompProfile") }}
+{{- else }}
+{{ toYaml .Values.securityContext }}
+{{- end }}
+{{- end }}
