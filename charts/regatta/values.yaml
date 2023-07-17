@@ -336,7 +336,7 @@ maintenance:
   backup:
     # -- enabled: Enable the backup CronJob
     #   Note: the maintenance server must be enabled
-    enabled: true
+    enabled: false
     # -- successfulJobsHistoryLimit: CronJob config field
     successfulJobsHistoryLimit: 4
     # -- failedJobsHistoryLimit: CronJob config field
