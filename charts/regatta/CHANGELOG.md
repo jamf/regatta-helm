@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2.1
+
+### Improvements
+
+* Added kubeVersion to Chart.yaml
+* Added icon to Chart.yaml
+* Added auto-generation of TLS certificates for better quickstart experience.
+
 ## v0.2.0
 
 ### Improvements
