@@ -1,6 +1,6 @@
 # regatta
 
-![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.2.0](https://img.shields.io/badge/AppVersion-0.2.0-informational?style=flat-square)
+![Version: 0.2.2](https://img.shields.io/badge/Version-0.2.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.2.0](https://img.shields.io/badge/AppVersion-0.2.0-informational?style=flat-square)
 
 Regatta is a distributed key-value store. Regatta is designed as easy to deploy, kubernetes friendly with emphasis
 on high read throughput and low operational cost.
@@ -11,7 +11,8 @@ on high read throughput and low operational cost.
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Regatta Developers | <regatta@jamf.com> |  |
+| coufalja |  |  |
+| jsfpdn |  |  |
 
 ## Requirements
 
@@ -37,7 +38,7 @@ Kubernetes: `>= 1.21.0`
 | fullnameOverride | string | `""` | fullnameOverride: String to fully override `"regatta.fullname"` |
 | image.imagePullPolicy | string | `"IfNotPresent"` | imagePullPolicy: ref: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy |
 | image.repository | string | `"ghcr.io/jamf/regatta"` | repository: Default image repository |
-| image.tag | string | `"v0.2.0-rc0"` | tag: Override to use different image version |
+| image.tag | string | `"v0.2.0"` | tag: Override to use different image version |
 | imagePullSecrets | list | `[]` | imagePullSecrets: For the Regatta image |
 | maintenance.backup | object | `{"bucket":"s3-bucket-name","enabled":false,"failedJobsHistoryLimit":2,"schedule":"0 */4 * * *","successfulJobsHistoryLimit":4}` | Controls the creation of the backup CronJob that uses the Regatta maintenance API Note: the `maintenance.server.enabled` must be set to `true` |
 | maintenance.backup.bucket | string | `"s3-bucket-name"` | bucket: Address of the s3 bucket where to upload backup |
@@ -55,7 +56,7 @@ Kubernetes: `>= 1.21.0`
 | maintenance.token | string | `"secret-token"` | token:   Depending on value of `secretKind`     - sealedSecret: enter the encrypted value     - plaintext: enter the plaintext secret value     - none: the field is ignored |
 | metricsPort | int | `8079` | metricsPort: Regatta metrics port |
 | mode | string | `"leader"` | mode: Regatta mode   Can be either leader or follower. |
-| nameOverride | string | `""` | nameOverride: Provide a name in place of `regatta` |
+| nameOverride | string | `""` | nameOverride: Provide a name in place of `regatta`. |
 | nodeSelector | object | `{}` | nodeSelector: Map of nodeSelector labels for the Regatta pods # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector |
 | persistentVolumeClaim.spec | object | `{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"10Gi"}}}` | spec: The full content of the persistentVolumeClaim.spec |
 | podAnnotations | object | `{}` | podAnnotations: Optional map of pod annotations |
@@ -73,8 +74,10 @@ Kubernetes: `>= 1.21.0`
 | raft.maxInMemLogSize | int | `6291456` | maxInMemLogSize is the target size in bytes allowed for storing in memory Raft logs on each Raft node.   In memory Raft logs are the ones that have not been applied yet. |
 | raft.maxRecvQueueSize | int | `0` | maxReceiveQueueSize is the maximum size in bytes of each receive queue. Once the maximum size is reached,   further replication messages will be dropped to restrict memory usage.   When set to 0, it means the queue size is unlimited. |
 | raft.maxSendQueueSize | int | `0` | maxSendQueueSize is the maximum size in bytes of each send queue. Once the maximum size is reached,   further replication messages will be dropped to restrict memory usage.   When set to 0, it means the send queue size is unlimited. |
+| raft.port | int | `5012` | port: Port number for internal communication, cannot be changed after cluster startup. |
 | raft.rtt | string | `"50ms"` | rtt: Defines the average Round Trip Time (RTT) between two NodeHost instances.   Such an RTT interval is internally used as a logical clock tick, Raft heartbeat and election intervals   are both defined in terms of how many such RTT intervals. Note that RTTMillisecond is the combined delays   between two NodeHost instances including all delays caused by network transmission,   delays caused by NodeHost queuing and processing.   Specified as Go's duration string (https://pkg.go.dev/maze.io/x/duration#ParseDuration). |
 | raft.snapshotEntries | int | `10000` | snapshotEntries: SnapshotEntries defines how often the state machine should be snapshotted automatically.   It is defined in terms of the number of applied Raft log entries. |
+| raft.snapshotRecoveryType | string | `"checkpoint"` | snapshotRecoveryType is the implementation of internal Raft snapshotting mechanism. Options are snapshot (legacy) or checkpoint (default). |
 | readinessProbe | object | `{"failureThreshold":3,"initialDelaySeconds":5,"periodSeconds":30,"successThreshold":1,"timeoutSeconds":5}` | startupProbe: Defines the readinessProbe for the Regatta container # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes |
 | reflectionAPI.enabled | bool | `false` | enabled: Whether reflection API is provided. Should be false on in production. |
 | replicas | int | `1` | replicas: Defines number of Regatta replicas   Note: This value must match the number of raft initial members `raft.initialMembers`. |
@@ -94,7 +97,7 @@ Kubernetes: `>= 1.21.0`
 | resources | object | `{}` | resources: Define the resources of the pods |
 | securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false}` | securityContext: The full content of the container.securityContext |
 | serviceAccount.create | bool | `true` | create: Create the ServiceAccount for regatta |
-| serviceAccount.name | string | `""` | name: ServiceAccount name override |
+| serviceAccount.name | string | `""` | name: ServiceAccount name override, default: `"regatta.fullname"` |
 | serviceMonitorEnabled | bool | `false` | serviceMonitorEnabled: ServiceMonitor object is created if set to true |
 | startupProbe | object | `{"failureThreshold":3,"initialDelaySeconds":90,"periodSeconds":60,"successThreshold":1,"timeoutSeconds":5}` | startupProbe: Defines the startupProbe for the Regatta container # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes |
 | storage.blockCacheSize | int | `796917760` | blockCacheSize: Shared block cache size in bytes. The cache is used to hold uncompressed blocks of data in memory |

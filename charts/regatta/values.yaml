@@ -1,7 +1,7 @@
 ## Regatta configuration
 
-# -- nameOverride: Provide a name in place of `regatta`
-nameOverride: "" # default: `"regatta"`
+# -- nameOverride: Provide a name in place of `regatta`.
+nameOverride: ""
 # -- fullnameOverride: String to fully override `"regatta.fullname"`
 fullnameOverride: ""
 
@@ -13,7 +13,7 @@ image:
   # -- imagePullPolicy: ref: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
   imagePullPolicy: IfNotPresent
   # -- tag: Override to use different image version
-  tag: v0.2.0-rc0
+  tag: v0.2.0
 
 # -- imagePullSecrets: For the Regatta image
 imagePullSecrets: []
@@ -65,10 +65,10 @@ priorityClassName: ""
 # -- tolerations: Defines tolerations for the Regatta pods
 ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
 tolerations: []
-#- key: "key1"
-#  operator: "Equal"
-#  value: "value1"
-#  effect: "NoSchedule"
+# - key: "key1"
+#   operator: "Equal"
+#   value: "value1"
+#   effect: "NoSchedule"
 
 # -- nodeSelector: Map of nodeSelector labels for the Regatta pods
 ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -103,8 +103,8 @@ persistentVolumeClaim:
 serviceAccount:
   # -- create: Create the ServiceAccount for regatta
   create: true
-  # -- name: ServiceAccount name override
-  name: "" # default: `"regatta.fullname"`
+  # -- name: ServiceAccount name override, default: `"regatta.fullname"`
+  name: ""
 
 # Security context configuration
 # -- securityContext: The full content of the container.securityContext
@@ -354,10 +354,14 @@ tables: table-1,table-2
 
 # Raft configuration
 raft:
+  # -- port: Port number for internal communication, cannot be changed after cluster startup.
+  port: 5012
+
   # -- logdb: Defines the implementation to use for LogDB store. Options are pebble (legacy) or tan (default).
   #    tan is less space efficient but significantly better at both memory and cpu usage.
   #    This option currently cannot be changed after cluster is started without restoring data from snapshot or backup.
   logdb: tan
+
   # -- rtt: Defines the average Round Trip Time (RTT) between two NodeHost instances.
   #   Such an RTT interval is internally used as a logical clock tick, Raft heartbeat and election intervals
   #   are both defined in terms of how many such RTT intervals. Note that RTTMillisecond is the combined delays
@@ -400,6 +404,9 @@ raft:
   #   further replication messages will be dropped to restrict memory usage.
   #   When set to 0, it means the send queue size is unlimited.
   maxSendQueueSize: 0
+
+  # --  snapshotRecoveryType is the implementation of internal Raft snapshotting mechanism. Options are snapshot (legacy) or checkpoint (default).
+  snapshotRecoveryType: checkpoint
 
 # -- dragonboatSoftSettings: ref: https://github.com/lni/dragonboat/blob/v3.3.6/internal/settings/soft.go#L27
 dragonboatSoftSettings: |

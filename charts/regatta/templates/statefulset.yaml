@@ -60,9 +60,9 @@ spec:
           {{- end }}
           --rest.address=0.0.0.0:{{ .Values.metricsPort }}
           --raft.logdb={{ .Values.raft.logdb }}
-          --raft.snapshot-recovery-type=checkpoint
-          --raft.address=$(POD_NAME).{{ template "regatta.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:5012
-          --raft.listen-address=0.0.0.0:5012
+          --raft.snapshot-recovery-type={{ .Values.raft.snapshotRecoveryType }}
+          --raft.address=$(POD_NAME).{{ template "regatta.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.raft.port }}
+          --raft.listen-address=0.0.0.0:{{ .Values.raft.port }}
           --raft.node-id=${NODE_ID}
           --raft.node-host-dir=/data/raft
           --raft.initial-members={{ template "regatta.initialMembers" . }}

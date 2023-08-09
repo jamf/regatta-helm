@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.2.2
+
+### Improvements
+
+* Default image version changed to released version
+* Support for `raft.port` and `raft.snapshotRecoveryType` added.
+
 ## v0.2.1
 
 ### Improvements
