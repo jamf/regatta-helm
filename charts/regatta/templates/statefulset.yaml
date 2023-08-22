@@ -80,6 +80,7 @@ spec:
           --tables.names={{ .Values.tables }}
           --replication.enabled={{ .Values.replication.server.enabled }}
           --replication.address=0.0.0.0:{{ .Values.replication.server.port }}
+          --replication.log-cache-size={{ .Values.replication.logCacheSize }}
         {{- end }}
         {{- if eq .Values.mode "follower" }}
           --replication.leader-address={{ .Values.replication.leaderAddress }}
@@ -89,9 +90,6 @@ spec:
           --replication.cert-filename=/replication-cert/tls.crt
           --replication.key-filename=/replication-cert/tls.key
           --replication.ca-filename=/replication-cert/ca.crt
-        {{- if .Values.replication.logCacheSize }}
-          --replication.log-cache-size={{ .Values.replication.logCacheSize }}
-        {{- end }}
           --maintenance.enabled={{ .Values.maintenance.server.enabled }}
         {{- if .Values.maintenance.server.enabled }}
           --maintenance.token=$(TOKEN)
