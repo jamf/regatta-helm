@@ -1,6 +1,6 @@
 # regatta
 
-![Version: 0.2.2](https://img.shields.io/badge/Version-0.2.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.2.0](https://img.shields.io/badge/AppVersion-0.2.0-informational?style=flat-square)
+![Version: 0.2.3](https://img.shields.io/badge/Version-0.2.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.2.1](https://img.shields.io/badge/AppVersion-0.2.1-informational?style=flat-square)
 
 Regatta is a distributed key-value store. Regatta is designed as easy to deploy, kubernetes friendly with emphasis
 on high read throughput and low operational cost.
@@ -38,7 +38,7 @@ Kubernetes: `>= 1.21.0`
 | fullnameOverride | string | `""` | fullnameOverride: String to fully override `"regatta.fullname"` |
 | image.imagePullPolicy | string | `"IfNotPresent"` | imagePullPolicy: ref: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy |
 | image.repository | string | `"ghcr.io/jamf/regatta"` | repository: Default image repository |
-| image.tag | string | `"v0.2.0"` | tag: Override to use different image version |
+| image.tag | string | `"v0.2.1"` | tag: Override to use different image version |
 | imagePullSecrets | list | `[]` | imagePullSecrets: For the Regatta image |
 | maintenance.backup | object | `{"bucket":"s3-bucket-name","enabled":false,"failedJobsHistoryLimit":2,"schedule":"0 */4 * * *","successfulJobsHistoryLimit":4}` | Controls the creation of the backup CronJob that uses the Regatta maintenance API Note: the `maintenance.server.enabled` must be set to `true` |
 | maintenance.backup.bucket | string | `"s3-bucket-name"` | bucket: Address of the s3 bucket where to upload backup |
@@ -82,6 +82,7 @@ Kubernetes: `>= 1.21.0`
 | reflectionAPI.enabled | bool | `false` | enabled: Whether reflection API is provided. Should be false on in production. |
 | replicas | int | `1` | replicas: Defines number of Regatta replicas   Note: This value must match the number of raft initial members `raft.initialMembers`. |
 | replication.leaderAddress | string | `"leader.regatta.example.com"` | leaderAddress: The address of the leader to replicate from Note: Applicable only if the Regatta mode is follower (`mode: follower`) |
+| replication.logCacheSize | int | `0` | logCacheSize: The replication server log cache size. 0 means the cache is turned off. |
 | replication.logRpcTimeout | string | `"5m"` | logRpcTimeout: The log RPC timeout. |
 | replication.maxSnapshotRecvBytesPerSecond | int | `0` | maxSnapshotRecvBytesPerSecond: Maximum number of bytes received per second by the snapshot API client,   default value 0 means unlimited. |
 | replication.server | object | `{"enabled":false,"externalDomain":"leader.regatta.example.com","port":8444,"serviceAnnotations":{}}` | server: The replication server may be used when Regatta is in the leader mode (`mode: leader`).   Follower Regatta replicates data from this server. |

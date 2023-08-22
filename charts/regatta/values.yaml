@@ -13,7 +13,7 @@ image:
   # -- imagePullPolicy: ref: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
   imagePullPolicy: IfNotPresent
   # -- tag: Override to use different image version
-  tag: v0.2.0
+  tag: v0.2.1
 
 # -- imagePullSecrets: For the Regatta image
 imagePullSecrets: []
@@ -208,6 +208,9 @@ replication:
     serviceAnnotations: {}
     # external-dns.alpha.kubernetes.io/hostname: leader.regatta.example.com
     # service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "900"
+
+  # -- logCacheSize: The replication server log cache size. 0 means the cache is turned off.
+  logCacheSize: 0
 
   tls:
     # -- mode:

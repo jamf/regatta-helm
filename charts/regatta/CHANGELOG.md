@@ -1,10 +1,17 @@
 # Changelog
 
+## v0.2.3
+
+### Improvements
+
+* Default image version changed to `v0.2.1`.
+* Fix `replication.logCacheSize` parameter.
+
 ## v0.2.2
 
 ### Improvements
 
-* Default image version changed to released version
+* Default image version changed to released version.
 * Support for `raft.port` and `raft.snapshotRecoveryType` added.
 
 ## v0.2.1
