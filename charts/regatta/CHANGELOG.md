@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.4
+
+### Improvements
+
+* When the replication is turned off on the leader its configuration is completely removed from the statefulset.
+
 ## v0.2.3
 
 ### Improvements

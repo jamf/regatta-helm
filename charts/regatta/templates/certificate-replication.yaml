@@ -1,4 +1,4 @@
-{{ if eq "certificate" .Values.replication.tls.mode }}
+{{ if and (eq "certificate" .Values.replication.tls.mode) (or (eq "follower" .Values.mode) ( .Values.replication.server.enabled)) }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
