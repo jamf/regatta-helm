@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.3.0
+
+### Improvements
+
+* Compatibility with `v0.3.x` Regatta series.
+* Added ability to specify `podSecurityContext`.
+* The container now start as rootless by default.
+
 ## v0.2.4
 
 ### Improvements
