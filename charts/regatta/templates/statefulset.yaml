@@ -28,6 +28,10 @@ spec:
       {{- with .Values.priorityClassName }}
       priorityClassName: {{ . }}
       {{- end }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
       containers:
       - name: {{ template "regatta.name" . }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -37,6 +41,10 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
         {{- if .Values.maintenance.server.enabled }}
         - name: TOKEN
           valueFrom:
@@ -45,20 +53,17 @@ spec:
               key: token
         {{- end }}
         command:
-        - "bash"
+        - "sh"
         - "-c"
         - >-
           export NODE_ID=$(expr $(echo "${POD_NAME: -1}") + 1);
           regatta {{ .Values.mode }}
           --memberlist.address=0.0.0.0:{{ .Values.cluster.port }}
           --memberlist.members=dnssrv+{{ template "regatta.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
-          --api.address=0.0.0.0:{{ .Values.api.port }}
+          --api.address=https://$(POD_IP):{{ .Values.api.port }}
           --api.cert-filename=/api-cert/tls.crt
           --api.key-filename=/api-cert/tls.key
-          {{- if .Values.reflectionAPI.enabled }}
-          --api.reflection-api
-          {{- end }}
-          --rest.address=0.0.0.0:{{ .Values.metricsPort }}
+          --rest.address=http://0.0.0.0:{{ .Values.metricsPort }}
           --raft.logdb={{ .Values.raft.logdb }}
           --raft.snapshot-recovery-type={{ .Values.raft.snapshotRecoveryType }}
           --raft.address=$(POD_NAME).{{ template "regatta.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.raft.port }}
@@ -80,7 +85,7 @@ spec:
           --tables.names={{ .Values.tables }}
           --replication.enabled={{ .Values.replication.server.enabled }}
         {{- if .Values.replication.server.enabled }}
-          --replication.address=0.0.0.0:{{ .Values.replication.server.port }}
+          --replication.address=https://$(POD_IP):{{ .Values.replication.server.port }}
           --replication.log-cache-size={{ .Values.replication.logCacheSize }}
         {{- end }}
         {{- end }}
@@ -97,7 +102,7 @@ spec:
           --maintenance.enabled={{ .Values.maintenance.server.enabled }}
         {{- if .Values.maintenance.server.enabled }}
           --maintenance.token=$(TOKEN)
-          --maintenance.address=0.0.0.0:{{ .Values.maintenance.server.port }}
+          --maintenance.address=https://$(POD_IP):{{ .Values.maintenance.server.port }}
           --maintenance.cert-filename=/maintenance-cert/tls.crt
           --maintenance.key-filename=/maintenance-cert/tls.key
         {{- end }}
@@ -138,7 +143,8 @@ spec:
           failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
           successThreshold: {{ .Values.readinessProbe.successThreshold }}
         {{- if .Values.securityContext }}
-        securityContext: {{ include "regatta.securityContext" . | nindent 12 }}
+        securityContext:
+          {{- include "regatta.securityContext" . | nindent 10 }}
         {{- end }}
         volumeMounts:
         - mountPath: /dragonboat-soft-settings.json

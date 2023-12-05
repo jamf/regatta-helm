@@ -19,6 +19,10 @@ spec:
           labels:
             {{- include "regatta.selectorLabels" . | nindent 12 }}
         spec:
+          {{- with .Values.podSecurityContext }}
+          securityContext:
+            {{- . | toYaml | nindent 12 }}
+          {{- end }}
           initContainers:
           - name: {{ template "regatta.name" . }}-load-backup
             image: {{ .Values.image.repository }}:{{ .Values.image.tag }}

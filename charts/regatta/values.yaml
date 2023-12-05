@@ -13,7 +13,7 @@ image:
   # -- imagePullPolicy: ref: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
   imagePullPolicy: IfNotPresent
   # -- tag: Override to use different image version
-  tag: v0.2.1
+  tag: v0.3.0
 
 # -- imagePullSecrets: For the Regatta image
 imagePullSecrets: []
@@ -105,6 +105,14 @@ serviceAccount:
   create: true
   # -- name: ServiceAccount name override, default: `"regatta.fullname"`
   name: ""
+
+# Pod security context configuration
+# -- podSecurityContext: The full content of the spec.securityContext
+podSecurityContext:
+  fsGroup: 1000
+  fsGroupChangePolicy: OnRootMismatch
+  runAsGroup: 1000
+  runAsUser: 1000
 
 # Security context configuration
 # -- securityContext: The full content of the container.securityContext
@@ -263,10 +271,6 @@ replication:
 
   # -- logRpcTimeout: The log RPC timeout.
   logRpcTimeout: 5m
-
-reflectionAPI:
-  # -- enabled: Whether reflection API is provided. Should be false on in production.
-  enabled: false
 
 # Maintenance API configuration
 maintenance:
