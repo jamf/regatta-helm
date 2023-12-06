@@ -90,7 +90,7 @@ spec:
         {{- end }}
         {{- end }}
         {{- if eq .Values.mode "follower" }}
-          --replication.leader-address={{ .Values.replication.leaderAddress }}
+          --replication.leader-address=https://{{ .Values.replication.leaderAddress }}
           --replication.max-snapshot-recv-bytes-per-second={{ .Values.replication.maxSnapshotRecvBytesPerSecond | int64 }}
           --replication.log-rpc-timeout={{ .Values.replication.logRpcTimeout }}
         {{- end }}

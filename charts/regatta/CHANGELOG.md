@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.1
+
+### Improvements
+
+* Default to `v0.3.2` regatta.
+* Fixed replication leader address parameter.
+
 ## v0.3.0
 
 ### Improvements
