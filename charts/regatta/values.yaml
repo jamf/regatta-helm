@@ -355,6 +355,14 @@ maintenance:
     schedule: "0 */4 * * *"
     # -- bucket: Address of the s3 bucket where to upload backup
     bucket: "s3-bucket-name"
+    # -- image: S3 backup tool image override.
+    image:
+      repository: peakcom/s5cmd
+      tag: v2.2.2
+    # -- workdir: Could be used to set specifics about backup job workdir, by default emptyDir is used.
+    # For larger backups ephemeralVolume should be considered.
+    workdir: {}
+
 
 # -- tables: Comma separated list of Regatta tables
 tables: table-1,table-2
