@@ -18,6 +18,9 @@ spec:
         metadata:
           labels:
             {{- include "regatta.selectorLabels" . | nindent 12 }}
+            {{- with .Values.additionalPodLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         spec:
           {{- with .Values.podSecurityContext }}
           securityContext:
@@ -58,15 +61,13 @@ spec:
             {{- end }}
           containers:
           - name: {{ template "regatta.name" . }}-store-backup
-            image: "peakcom/s5cmd:v1.3.0"
+            image: {{ .Values.maintenance.backup.image.repository }}:{{ .Values.maintenance.backup.image.tag }}
             imagePullPolicy: {{ .Values.image.imagePullPolicy }}
             command:
             - /bin/sh
             - -c
             - >-
-              CURR_DATE=$(date "+%y-%m-%d-%H-%M") &&
-              ln -s /backup/ /$CURR_DATE &&
-              ./s5cmd --json cp /$CURR_DATE/ {{ .Values.maintenance.backup.bucket }}/$CURR_DATE/
+              CURR_DATE=$(date "+%y-%m-%d-%H-%M") && /s5cmd --json cp /backup/ {{ .Values.maintenance.backup.bucket }}/$CURR_DATE/
             resources:
               limits:
                 cpu: '1'
@@ -80,7 +81,11 @@ spec:
           restartPolicy: OnFailure
           volumes:
           - name: backup
+            {{- if .Values.maintenance.backup.workdir }}
+            {{- .Values.maintenance.backup.workdir | default "emptyDir: {}" | toYaml | nindent 12 }}
+            {{- else }}
             emptyDir: {}
+            {{- end }}
           - name: maintenance-cert
             secret:
               defaultMode: 420

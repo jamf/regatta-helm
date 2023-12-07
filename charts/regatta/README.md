@@ -1,6 +1,6 @@
 # regatta
 
-![Version: 0.3.1](https://img.shields.io/badge/Version-0.3.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.3.2](https://img.shields.io/badge/AppVersion-0.3.2-informational?style=flat-square)
+![Version: 0.3.2](https://img.shields.io/badge/Version-0.3.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.3.2](https://img.shields.io/badge/AppVersion-0.3.2-informational?style=flat-square)
 
 Regatta is a distributed key-value store. Regatta is designed as easy to deploy, kubernetes friendly with emphasis
 on high read throughput and low operational cost.
@@ -40,12 +40,14 @@ Kubernetes: `>= 1.21.0`
 | image.repository | string | `"ghcr.io/jamf/regatta"` | repository: Default image repository |
 | image.tag | string | `"v0.3.2"` | tag: Override to use different image version |
 | imagePullSecrets | list | `[]` | imagePullSecrets: For the Regatta image |
-| maintenance.backup | object | `{"bucket":"s3-bucket-name","enabled":false,"failedJobsHistoryLimit":2,"schedule":"0 */4 * * *","successfulJobsHistoryLimit":4}` | Controls the creation of the backup CronJob that uses the Regatta maintenance API Note: the `maintenance.server.enabled` must be set to `true` |
+| maintenance.backup | object | `{"bucket":"s3-bucket-name","enabled":false,"failedJobsHistoryLimit":2,"image":{"repository":"peakcom/s5cmd","tag":"v2.2.2"},"schedule":"0 */4 * * *","successfulJobsHistoryLimit":4,"workdir":{}}` | Controls the creation of the backup CronJob that uses the Regatta maintenance API Note: the `maintenance.server.enabled` must be set to `true` |
 | maintenance.backup.bucket | string | `"s3-bucket-name"` | bucket: Address of the s3 bucket where to upload backup |
 | maintenance.backup.enabled | bool | `false` | enabled: Enable the backup CronJob   Note: the maintenance server must be enabled |
 | maintenance.backup.failedJobsHistoryLimit | int | `2` | failedJobsHistoryLimit: CronJob config field |
+| maintenance.backup.image | object | `{"repository":"peakcom/s5cmd","tag":"v2.2.2"}` | image: S3 backup tool image override. |
 | maintenance.backup.schedule | string | `"0 */4 * * *"` | schedule: Cron expression defining how often the backup is executed |
 | maintenance.backup.successfulJobsHistoryLimit | int | `4` | successfulJobsHistoryLimit: CronJob config field |
+| maintenance.backup.workdir | object | `{}` | workdir: Could be used to set specifics about backup job workdir, by default emptyDir is used. For larger backups ephemeralVolume should be considered. |
 | maintenance.secretKind | string | `"plaintext"` | secretKind   May be one of:   - sealedSecret: Use if you have SealedSecrets support on your cluster. (https://sealed-secrets.netlify.app/)   - plaintext: Use to create Opaque Secret from the plaintext.   - none: Do not create the secret with the token at all. The secret must be provided externally.      Secret example:         apiVersion: v1        kind: Secret        metadata:          name: regatta-maintenance-token        data:          token: c2VjcmV0LXRva2Vu  |
 | maintenance.server.enabled | bool | `false` | enabled: Maintenance API enabled |
 | maintenance.server.port | int | `8445` | port: Port of maintenance server to listen on |
