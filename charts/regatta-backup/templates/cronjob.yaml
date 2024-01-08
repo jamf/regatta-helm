@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ template "regatta-backup.name" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "regatta-backup.labels" . | nindent 4 }}
 spec:

@@ -42,8 +42,9 @@ Kubernetes: `>= 1.21.0`
 | image.tag | string | `"v0.4.0-rc0"` | tag: Override to use different image version |
 | imagePullSecrets | list | `[]` | imagePullSecrets: For the Regatta image |
 | maintenance.enabled | bool | `false` | enabled: Maintenance API enabled |
-| maintenance.secretKind | string | `"plaintext"` | secretKind   May be one of:   - sealedSecret: Use if you have SealedSecrets support on your cluster. (https://sealed-secrets.netlify.app/)   - plaintext: Use to create Opaque Secret from the plaintext.   - none: Do not create the secret with the token at all. The secret must be provided externally.      Secret example:         apiVersion: v1        kind: Secret        metadata:          name: regatta-maintenance-token        data:          token: c2VjcmV0LXRva2Vu  |
-| maintenance.token | string | `"secret-token"` | token:   Depending on value of `secretKind`     - sealedSecret: enter the encrypted value     - plaintext: enter the plaintext secret value     - none: the field is ignored |
+| maintenance.token | object | `{"secretKind":"plaintext","value":"secret-token"}` | token:   Depending on value of `secretKind`     - sealedSecret: enter the encrypted value     - plaintext: enter the plaintext secret value     - none: the field is ignored |
+| maintenance.token.secretKind | string | `"plaintext"` | secretKind   May be one of:   - sealedSecret: Use if you have SealedSecrets support on your cluster. (https://sealed-secrets.netlify.app/)   - plaintext: Use to create Opaque Secret from the plaintext.   - none: Do not create the secret with the token at all. The secret must be provided externally.      Secret example:         apiVersion: v1        kind: Secret        metadata:          name: regatta-maintenance-token        data:          token: c2VjcmV0LXRva2Vu  |
+| maintenance.token.value | string | `"secret-token"` | value:   Based on the secretKind it may be literal token, the SealedSecret to create or a reference to existing secret. |
 | metricsPort | int | `8079` | metricsPort: Regatta metrics port |
 | mode | string | `"leader"` | mode: Regatta mode   Can be either leader or follower. |
 | nameOverride | string | `""` | nameOverride: Provide a name in place of `regatta`. |

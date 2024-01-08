@@ -276,29 +276,31 @@ replication:
 
 # Maintenance API configuration
 maintenance:
-  # -- secretKind
-  #   May be one of:
-  #   - sealedSecret: Use if you have SealedSecrets support on your cluster. (https://sealed-secrets.netlify.app/)
-  #   - plaintext: Use to create Opaque Secret from the plaintext.
-  #   - none: Do not create the secret with the token at all. The secret must be provided externally.
-  #
-  #     Secret example:
-  #
-  #        apiVersion: v1
-  #        kind: Secret
-  #        metadata:
-  #          name: regatta-maintenance-token
-  #        data:
-  #          token: c2VjcmV0LXRva2Vu
-  #
-  secretKind: plaintext
-
   # -- token:
   #   Depending on value of `secretKind`
   #     - sealedSecret: enter the encrypted value
   #     - plaintext: enter the plaintext secret value
   #     - none: the field is ignored
-  token: "secret-token"
+  token:
+    # -- secretKind
+    #   May be one of:
+    #   - sealedSecret: Use if you have SealedSecrets support on your cluster. (https://sealed-secrets.netlify.app/)
+    #   - plaintext: Use to create Opaque Secret from the plaintext.
+    #   - none: Do not create the secret with the token at all. The secret must be provided externally.
+    #
+    #     Secret example:
+    #
+    #        apiVersion: v1
+    #        kind: Secret
+    #        metadata:
+    #          name: regatta-maintenance-token
+    #        data:
+    #          token: c2VjcmV0LXRva2Vu
+    #
+    secretKind: plaintext
+    # -- value:
+    #   Based on the secretKind it may be literal token, the SealedSecret to create or a reference to existing secret.
+    value: "secret-token"
 
   # -- enabled: Maintenance API enabled
   enabled: false

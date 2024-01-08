@@ -85,13 +85,12 @@ source:
     tag: v0.4.0-rc0
   # -- resources: Define the resources of the container
   resources:
-    resources:
-      limits:
-        cpu: '1'
-        memory: 1Gi
-      requests:
-        cpu: 200m
-        memory: 512Mi
+    limits:
+      cpu: '1'
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 512Mi
   # -- address: Regatta API server address.
   address: regatta-api:8443
 
@@ -114,7 +113,7 @@ source:
     #        apiVersion: v1
     #        kind: Secret
     #        metadata:
-    #          name: regatta-maintenance-token
+    #          name: regatta-backup-api-cert
     #        data:
     #          token: c2VjcmV0LXRva2Vu
     #
@@ -142,7 +141,7 @@ source:
     #        apiVersion: v1
     #        kind: Secret
     #        metadata:
-    #          name: regatta-maintenance-token
+    #          name: regatta-backup-maintenance-token
     #        data:
     #          token: c2VjcmV0LXRva2Vu
     #

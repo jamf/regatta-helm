@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ template "regatta.name" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "regatta.labels" . | nindent 4 }}
 spec:

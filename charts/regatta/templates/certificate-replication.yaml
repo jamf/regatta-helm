@@ -3,6 +3,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ template "regatta.name" . }}-replication
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "regatta.labels" . | nindent 4 }}
 spec:
