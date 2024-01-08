@@ -1,4 +1,4 @@
-{{- if and .Values.maintenance.server.enabled .Values.maintenance.backup.enabled }}
+{{- if and .Values.maintenance.enabled .Values.maintenance.backup.enabled }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -32,11 +32,11 @@ spec:
             imagePullPolicy: {{ .Values.image.imagePullPolicy }}
             args:
             - "backup"
-            - "--address={{ template "regatta.name" . }}-maintenance:{{ .Values.maintenance.server.port }}"
+            - "--address={{ template "regatta.name" . }}-api:{{ .Values.api.port }}"
             {{- if .Values.maintenance.token }}
             - "--token=$(TOKEN)"
             {{- end }}
-            - "--ca=/maintenance-cert/ca.crt"
+            - "--ca=/api-cert/ca.crt"
             - "--dir=/backup"
             - "--json=true"
             resources:
@@ -47,8 +47,8 @@ spec:
                 cpu: 200m
                 memory: 512Mi
             volumeMounts:
-            - mountPath: /maintenance-cert
-              name: maintenance-cert
+            - mountPath: /api-cert
+              name: api-cert
             - mountPath: /backup
               name: backup
             {{- if .Values.maintenance.token }}
@@ -86,8 +86,8 @@ spec:
             {{- else }}
             emptyDir: {}
             {{- end }}
-          - name: maintenance-cert
+          - name: api-cert
             secret:
               defaultMode: 420
-              secretName: {{ template "regatta.name" . }}-maintenance-cert
+              secretName: {{ template "regatta.name" . }}-api-cert
 {{- end }}

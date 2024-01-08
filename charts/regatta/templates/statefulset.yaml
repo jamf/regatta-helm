@@ -45,7 +45,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
-        {{- if .Values.maintenance.server.enabled }}
+        {{- if .Values.maintenance.enabled }}
         - name: TOKEN
           valueFrom:
             secretKeyRef:
@@ -58,9 +58,12 @@ spec:
         - >-
           export NODE_ID=$(expr $(echo "${POD_NAME: -1}") + 1);
           regatta {{ .Values.mode }}
+          --memberlist.cluster-name={{ .Values.cluster.name }}
+          --memberlist.node-name=$(POD_NAME)
           --memberlist.address=0.0.0.0:{{ .Values.cluster.port }}
           --memberlist.members=dnssrv+{{ template "regatta.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
-          --api.address=https://$(POD_IP):{{ .Values.api.port }}
+          --api.address=https://0.0.0.0:{{ .Values.api.port }}
+          --api.advertise-address=https://$(POD_IP):{{ .Values.api.port }}
           --api.cert-filename=/api-cert/tls.crt
           --api.key-filename=/api-cert/tls.key
           --rest.address=http://0.0.0.0:{{ .Values.metricsPort }}
@@ -99,12 +102,9 @@ spec:
           --replication.key-filename=/replication-cert/tls.key
           --replication.ca-filename=/replication-cert/ca.crt
         {{- end }}
-          --maintenance.enabled={{ .Values.maintenance.server.enabled }}
-        {{- if .Values.maintenance.server.enabled }}
+          --maintenance.enabled={{ .Values.maintenance.enabled }}
+        {{- if .Values.maintenance.enabled }}
           --maintenance.token=$(TOKEN)
-          --maintenance.address=https://$(POD_IP):{{ .Values.maintenance.server.port }}
-          --maintenance.cert-filename=/maintenance-cert/tls.crt
-          --maintenance.key-filename=/maintenance-cert/tls.key
         {{- end }}
         ports:
         - name: cluster
@@ -116,10 +116,6 @@ spec:
         {{- if and .Values.replication.server.enabled (eq .Values.mode "leader") }}
         - name: https-repl
           containerPort: {{ .Values.replication.server.port }}
-        {{- end }}
-        {{- if .Values.maintenance.server.enabled }}
-        - name: https-mainten
-          containerPort: {{ .Values.maintenance.server.port }}
         {{- end }}
         {{- with .Values.resources }}
         resources: {{- toYaml . | nindent 10 }}
@@ -156,10 +152,6 @@ spec:
         - mountPath: /replication-cert
           name: replication-cert
         {{- end }}
-        {{- if .Values.maintenance.server.enabled }}
-        - mountPath: /maintenance-cert
-          name: maintenance-cert
-        {{- end }}
         - mountPath: /data
           name: data
         {{- if .Values.temp.enabled }}
@@ -187,12 +179,6 @@ spec:
         secret:
           defaultMode: 420
           secretName: {{ template "regatta.name" . }}-replication-cert
-      {{- end }}
-      {{- if .Values.maintenance.server.enabled }}
-      - name: maintenance-cert
-        secret:
-          defaultMode: 420
-          secretName: {{ template "regatta.name" . }}-maintenance-cert
       {{- end }}
       {{- with .Values.tolerations }}
       tolerations: {{- toYaml . | nindent 6 }}
