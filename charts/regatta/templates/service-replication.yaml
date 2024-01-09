@@ -4,6 +4,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "regatta.name" . }}-replication
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "regatta.labels" . | nindent 4 }}
   {{ with .Values.replication.server.serviceAnnotations }}

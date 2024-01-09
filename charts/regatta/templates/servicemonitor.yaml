@@ -3,6 +3,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ template "regatta.name" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "regatta.labels" . | nindent 4 }}
 spec:

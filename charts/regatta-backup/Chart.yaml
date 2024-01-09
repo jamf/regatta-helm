@@ -1,13 +1,15 @@
 apiVersion: v2
-name: regatta
+name: regatta-backup
 description: |
   Regatta is a distributed key-value store. Regatta is designed as easy to deploy, kubernetes friendly with emphasis
-  on high read throughput and low operational cost.
+  on high read throughput and low operational cost. Purpose of regatta-backup is as the name suggest backup Regatta store into configurable sink at periodic interval.
 home: https://engineering.jamf.com/regatta
 keywords:
 - Regatta
 - database
 - key-value
+- backup
+- S3
 maintainers:
 - name: "coufalja"
 - name: "jsfpdn"

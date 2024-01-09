@@ -1,0 +1,121 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ template "regatta-backup.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "regatta-backup.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.schedule }}
+  successfulJobsHistoryLimit: {{ .Values.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit }}
+  jobTemplate:
+    metadata:
+      labels:
+        {{- include "regatta-backup.selectorLabels" . | nindent 8 }}
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "regatta-backup.selectorLabels" . | nindent 12 }}
+            {{- with .Values.additionalPodLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+        spec:
+          {{- if .Values.serviceAccount.create }}
+          serviceAccountName: {{ template "regatta-backup.serviceAccountName" . }}
+          {{- end }}
+          {{- with .Values.priorityClassName }}
+          priorityClassName: {{ . }}
+          {{- end }}
+          {{- with .Values.podSecurityContext }}
+          securityContext:
+            {{- . | toYaml | nindent 12 }}
+          {{- end }}
+          initContainers:
+          - name: {{ template "regatta-backup.name" . }}-load-backup
+            image: {{ .Values.source.image.repository }}:{{ .Values.source.image.tag }}
+            imagePullPolicy: {{ .Values.source.image.imagePullPolicy }}
+            args:
+            - "backup"
+            - "--address={{ .Values.source.address }}"
+            {{- if ne .Values.source.token.secretKind "none" }}
+            - "--token=$(TOKEN)"
+            {{- end }}
+            {{- if ne .Values.source.ca.secretKind "none" }}
+            - "--ca=/api-cert/ca.crt"
+            {{- end }}
+            - "--dir=/backup"
+            - "--json=true"
+            {{- with .Values.source.resources }}
+            resources:
+              {{- . | toYaml | nindent 14 }}
+            {{- end }}
+            volumeMounts:
+            {{- if ne .Values.source.ca.secretKind "none" }}
+            - mountPath: /api-cert
+              name: api-cert
+            {{- end }}
+            - mountPath: /backup
+              name: backup
+            {{- if ne .Values.source.token.secretKind "none" }}
+            env:
+            - name: TOKEN
+              valueFrom:
+                secretKeyRef:
+                  {{- if eq .Values.source.token.secretKind "ref" }}
+                  name: {{ .Values.source.token.value }}
+                  {{- else }}
+                  name: {{ template "regatta-backup.name" . }}-maintenance-token
+                  {{- end }}
+                  key: token
+            {{- end }}
+          containers:
+          - name: {{ template "regatta-backup.name" . }}-store-backup
+            image: {{ .Values.sink.image.repository }}:{{ .Values.sink.image.tag }}
+            imagePullPolicy: {{ .Values.sink.image.imagePullPolicy }}
+            command:
+            - /bin/sh
+            - -c
+            - >-
+              CURR_DATE=$(date "+%y-%m-%d-%H-%M") && /s5cmd --json cp /backup/ {{ .Values.sink.bucket }}/$CURR_DATE/
+            {{- with .Values.sink.resources }}
+            resources:
+              {{- . | toYaml | nindent 14 }}
+            {{- end }}
+            volumeMounts:
+            - mountPath: /backup
+              name: backup
+          restartPolicy: OnFailure
+          {{- with .Values.tolerations }}
+          tolerations: {{- toYaml . | nindent 6 }}
+          {{- end }}
+          {{- with .Values.nodeSelector }}
+          nodeSelector: {{- toYaml . | nindent 8 }}
+          {{- end }}
+          {{- if .Values.podAntiAffinity.enabled }}
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+              - topologyKey: {{ .Values.podAntiAffinity.topologyKey }}
+                labelSelector:
+                  matchLabels:
+                    {{- include "regatta-backup.selectorLabels" $ | nindent 16 }}
+          {{- end }}
+          volumes:
+          - name: backup
+            {{- if .Values.workdir }}
+            {{- .Values.workdir | default "emptyDir: {}" | toYaml | nindent 12 }}
+            {{- else }}
+            emptyDir: {}
+            {{- end }}
+          {{- if ne .Values.source.ca.secretKind "none" }}
+          - name: api-cert
+            secret:
+              defaultMode: 420
+              {{- if eq .Values.source.ca.secretKind "ref" }}
+              secretName: {{ .Values.source.ca.value }}
+              {{- else }}
+              secretName: {{ template "regatta-backup.name" . }}-api-cert
+              {{- end }}
+          {{- end }}

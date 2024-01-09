@@ -1,5 +1,12 @@
 # Changelog
+---
+## v0.4.0
 
+### Improvements
+* Compatibility with `v0.4.x` Regatta series.
+* Extracted the backup cron into standalone chart.
+
+---
 ## v0.3.2
 
 ### Improvements
