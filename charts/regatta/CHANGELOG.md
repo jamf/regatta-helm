@@ -1,5 +1,11 @@
 # Changelog
 ---
+## v0.4.1
+
+### Improvements
+* Bump to release image version.
+
+---
 ## v0.4.0
 
 ### Improvements
