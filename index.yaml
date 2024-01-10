@@ -3,6 +3,28 @@ entries:
   regatta:
   - apiVersion: v2
     appVersion: 0.4.0
+    created: "2024-01-10T09:27:06.354034351Z"
+    description: 'Regatta is a distributed key-value store. Regatta is designed as
+      easy to deploy, kubernetes friendly with emphasis on high read throughput and
+      low operational cost. '
+    digest: b2a54e53d6a3a1537510afb9edb8eca9b1739b2f64319e5cc33af4f81d1b8abe
+    home: https://engineering.jamf.com/regatta
+    icon: https://github.com/jamf/regatta/blob/master/docs/static/regatta.png
+    keywords:
+    - Regatta
+    - database
+    - key-value
+    kubeVersion: '>= 1.21.0'
+    maintainers:
+    - name: coufalja
+    - name: jsfpdn
+    name: regatta
+    type: application
+    urls:
+    - https://github.com/jamf/regatta-helm/releases/download/regatta-0.4.1/regatta-0.4.1.tgz
+    version: 0.4.1
+  - apiVersion: v2
+    appVersion: 0.4.0
     created: "2024-01-09T08:37:24.127741993Z"
     description: 'Regatta is a distributed key-value store. Regatta is designed as
       easy to deploy, kubernetes friendly with emphasis on high read throughput and
@@ -312,6 +334,31 @@ entries:
   regatta-backup:
   - apiVersion: v2
     appVersion: 0.4.0
+    created: "2024-01-10T09:27:06.560639842Z"
+    description: 'Regatta is a distributed key-value store. Regatta is designed as
+      easy to deploy, kubernetes friendly with emphasis on high read throughput and
+      low operational cost. Purpose of regatta-backup is as the name suggest backup
+      Regatta store into configurable sink at periodic interval. '
+    digest: a9c568e2a1724f34012c6727b36e7307fcd0e93e714847ab4741e2e44d96ecc3
+    home: https://engineering.jamf.com/regatta
+    icon: https://github.com/jamf/regatta/blob/master/docs/static/regatta.png
+    keywords:
+    - Regatta
+    - database
+    - key-value
+    - backup
+    - S3
+    kubeVersion: '>= 1.21.0'
+    maintainers:
+    - name: coufalja
+    - name: jsfpdn
+    name: regatta-backup
+    type: application
+    urls:
+    - https://github.com/jamf/regatta-helm/releases/download/regatta-backup-0.4.2/regatta-backup-0.4.2.tgz
+    version: 0.4.2
+  - apiVersion: v2
+    appVersion: 0.4.0
     created: "2024-01-09T11:49:09.983194044Z"
     description: 'Regatta is a distributed key-value store. Regatta is designed as
       easy to deploy, kubernetes friendly with emphasis on high read throughput and
@@ -360,4 +407,4 @@ entries:
     urls:
     - https://github.com/jamf/regatta-helm/releases/download/regatta-backup-0.4.0/regatta-backup-0.4.0.tgz
     version: 0.4.0
-generated: "2024-01-09T11:49:09.983287889Z"
+generated: "2024-01-10T09:27:06.560787546Z"
