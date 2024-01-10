@@ -85,7 +85,7 @@ source:
     # -- imagePullPolicy: ref: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
     imagePullPolicy: IfNotPresent
     # -- tag: Override to use different image version
-    tag: v0.4.0-rc0
+    tag: v0.4.0
   # -- resources: Define the resources of the container
   resources:
     limits:
