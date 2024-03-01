@@ -13,7 +13,7 @@ image:
   # -- imagePullPolicy: ref: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
   imagePullPolicy: IfNotPresent
   # -- tag: Override to use different image version
-  tag: v0.4.0
+  tag: v0.4.1
 
 # -- imagePullSecrets: For the Regatta image
 imagePullSecrets: []
@@ -380,10 +380,27 @@ temp:
   # -- sizeLimit: Size constraint for temp file system
   sizeLimit:
 
-# Storage configuration
+# -- storage: table storage configuration
 storage:
   # -- blockCacheSize: Shared block cache size in bytes. The cache is used to hold uncompressed blocks of data in memory
   blockCacheSize: 796917760
+
+# -- networkPolicy: network policy configuration. Enabling will add sane defaults ensuring working cluster configuration and add your ingress and egress rules on top.
+networkPolicy:
+  # -- enabled: if enabled deploys a default policy allowing all traffic within the namespace.
+  enabled: false
+  # -- ingress: rules applied to incoming traffic.
+  #   Example ingress policy allowing any traffic to API port.
+  #   - ports:
+  #     - port: 8443
+  #       protocol: TCP
+  ingress: []
+  # -- egress: rules applied to outgoing traffic.
+  #   Example egress policy allowing any traffic to port 443.
+  #   - ports:
+  #     - port: 443
+  #       protocol: TCP
+  egress: []
 
 # -- serviceMonitorEnabled: ServiceMonitor object is created if set to true
 serviceMonitorEnabled: false

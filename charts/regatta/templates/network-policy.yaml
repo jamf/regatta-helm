@@ -1,0 +1,55 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ template "regatta.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "regatta.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "regatta.selectorLabels" . | nindent 6 }}
+  {{ if or .Values.networkPolicy.ingress .Values.networkPolicy.egress }}
+  policyTypes:
+  {{- end}}
+  {{- if .Values.networkPolicy.ingress }}
+  - Ingress
+  {{- end }}
+  {{- if .Values.networkPolicy.egress }}
+  - Egress
+  {{- end }}
+  {{- if .Values.networkPolicy.ingress }}
+  ingress:
+  - ports:
+    - port: {{ .Values.raft.port }}
+      protocol: TCP
+    - port: {{ .Values.cluster.port }}
+      protocol: UDP
+    - port: {{ .Values.cluster.port }}
+      protocol: TCP
+    from:
+    - podSelector:
+        matchLabels:
+          {{- include "regatta.selectorLabels" . | nindent 10 }}
+  {{- .Values.networkPolicy.ingress | toYaml | nindent 2 }}
+  {{- end }}
+  {{- if .Values.networkPolicy.egress }}
+  egress:
+  - ports:
+    - port: {{ .Values.raft.port }}
+      protocol: TCP
+    - port: {{ .Values.cluster.port }}
+      protocol: UDP
+    - port: {{ .Values.cluster.port }}
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+          {{- include "regatta.selectorLabels" . | nindent 10 }}
+  - ports:
+    - port: 53
+      protocol: UDP
+  {{- .Values.networkPolicy.egress | toYaml | nindent 2 }}
+  {{- end }}
+{{- end}}
