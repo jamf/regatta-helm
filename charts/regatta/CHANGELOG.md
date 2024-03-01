@@ -1,5 +1,11 @@
 # Changelog
 ---
+## v0.4.2
+
+### Improvements
+* Add support for NetworkPolicy.
+
+---
 ## v0.4.1
 
 ### Improvements

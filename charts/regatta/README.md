@@ -1,6 +1,6 @@
 # regatta
 
-![Version: 0.4.1](https://img.shields.io/badge/Version-0.4.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.4.0](https://img.shields.io/badge/AppVersion-0.4.0-informational?style=flat-square)
+![Version: 0.4.2](https://img.shields.io/badge/Version-0.4.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.4.1](https://img.shields.io/badge/AppVersion-0.4.1-informational?style=flat-square)
 
 Regatta is a distributed key-value store. Regatta is designed as easy to deploy, kubernetes friendly with emphasis
 on high read throughput and low operational cost.
@@ -39,7 +39,7 @@ Kubernetes: `>= 1.21.0`
 | fullnameOverride | string | `""` | fullnameOverride: String to fully override `"regatta.fullname"` |
 | image.imagePullPolicy | string | `"IfNotPresent"` | imagePullPolicy: ref: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy |
 | image.repository | string | `"ghcr.io/jamf/regatta"` | repository: Default image repository |
-| image.tag | string | `"v0.4.0"` | tag: Override to use different image version |
+| image.tag | string | `"v0.4.1"` | tag: Override to use different image version |
 | imagePullSecrets | list | `[]` | imagePullSecrets: For the Regatta image |
 | maintenance.enabled | bool | `false` | enabled: Maintenance API enabled |
 | maintenance.token | object | `{"secretKind":"plaintext","value":"secret-token"}` | token:   Depending on value of `secretKind`     - sealedSecret: enter the encrypted value     - plaintext: enter the plaintext secret value     - none: the field is ignored |
@@ -48,6 +48,10 @@ Kubernetes: `>= 1.21.0`
 | metricsPort | int | `8079` | metricsPort: Regatta metrics port |
 | mode | string | `"leader"` | mode: Regatta mode   Can be either leader or follower. |
 | nameOverride | string | `""` | nameOverride: Provide a name in place of `regatta`. |
+| networkPolicy | object | `{"egress":[],"enabled":false,"ingress":[]}` | networkPolicy: network policy configuration. Enabling will add sane defaults ensuring working cluster configuration and add your ingress and egress rules on top. |
+| networkPolicy.egress | list | `[]` | egress: rules applied to outgoing traffic.   Example egress policy allowing any traffic to port 443.   - ports:     - port: 443       protocol: TCP |
+| networkPolicy.enabled | bool | `false` | enabled: if enabled deploys a default policy allowing all traffic within the namespace. |
+| networkPolicy.ingress | list | `[]` | ingress: rules applied to incoming traffic.   Example ingress policy allowing any traffic to API port.   - ports:     - port: 8443       protocol: TCP |
 | nodeSelector | object | `{}` | nodeSelector: Map of nodeSelector labels for the Regatta pods # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector |
 | persistentVolumeClaim.spec | object | `{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"10Gi"}}}` | spec: The full content of the persistentVolumeClaim.spec |
 | podAnnotations | object | `{}` | podAnnotations: Optional map of pod annotations |
@@ -92,6 +96,7 @@ Kubernetes: `>= 1.21.0`
 | serviceAccount.name | string | `""` | name: ServiceAccount name override, default: `"regatta.fullname"` |
 | serviceMonitorEnabled | bool | `false` | serviceMonitorEnabled: ServiceMonitor object is created if set to true |
 | startupProbe | object | `{"failureThreshold":3,"initialDelaySeconds":90,"periodSeconds":60,"successThreshold":1,"timeoutSeconds":5}` | startupProbe: Defines the startupProbe for the Regatta container # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes |
+| storage | object | `{"blockCacheSize":796917760}` | storage: table storage configuration |
 | storage.blockCacheSize | int | `796917760` | blockCacheSize: Shared block cache size in bytes. The cache is used to hold uncompressed blocks of data in memory |
 | tables | string | `"table-1,table-2"` | tables: Comma separated list of Regatta tables |
 | temp.enabled | bool | `false` | enabled: Set to true to enable tmp EmptyDir. |
