@@ -1,5 +1,13 @@
 # Changelog
 ---
+## v0.4.3
+
+### Improvements
+* Add support for extra templated manifests.
+* Remove the "external" loadbalancer.
+* Add additional options to Replication and Api service.
+
+---
 ## v0.4.2
 
 ### Improvements

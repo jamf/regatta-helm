@@ -5,8 +5,18 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "regatta.labels" . | nindent 4 }}
+  {{ with .Values.api.service.annotations }}
+  annotations:
+    {{ . | toYaml | nindent 4 }}
+  {{ end }}
 spec:
-  clusterIP: None
+  {{- if .Values.api.service.clusterIP }}
+  clusterIP: {{ .Values.api.service.clusterIP }}
+  {{- end }}
+  type: {{ .Values.api.service.type }}
+  {{- if .Values.api.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.api.service.externalTrafficPolicy }}
+  {{- end }}
   selector:
     {{- include "regatta.selectorLabels" . | nindent 6 }}
   ports:
