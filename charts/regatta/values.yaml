@@ -134,6 +134,15 @@ cluster:
 api:
   # -- port: gRPC API port
   port: 8443
+  service:
+    # -- annotations: API service annotations.
+    annotations: {}
+    # -- type: API service type.
+    type: ClusterIP
+    # -- clusterIP: specific clusterIP assigned to API service, set to None for headless service.
+    clusterIP: None
+    # -- externalTrafficPolicy: traffic policy if service type is LoadBalancer.
+    externalTrafficPolicy: ""
 
   tls:
     # -- mode:
@@ -171,28 +180,6 @@ api:
     key: |
       plaintext server certificate key
 
-  # -- externalLoadBalancer: If enabled, the Service of type LoadBalancer is created
-  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer
-  externalLoadBalancer:
-    # -- enabled: true/false
-    enabled: false
-
-    # -- externalDomain: External Regatta API domain name
-    externalDomain: regatta.example.com
-
-    # -- annotations: Service annotations
-    annotations: {}
-    # Example annotations for K8S cluster running in AWS:
-    #
-    #  external-dns.alpha.kubernetes.io/hostname: regatta.example.com
-    #  service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "900"
-    #  service.beta.kubernetes.io/aws-load-balancer-backend-protocol: ssl
-
-    # -- loadBalancerSourceRanges: external access whitelist, available on AWS only
-    ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#aws-nlb-support
-    loadBalancerSourceRanges: []
-    # - 0.0.0.0/0
-
 # -- metricsPort: Regatta metrics port
 metricsPort: 8079
 
@@ -214,10 +201,15 @@ replication:
     # -- externalDomain:
     externalDomain: "leader.regatta.example.com"
 
-    # -- serviceAnnotations: Replication server LoadBalancer service annotations
-    serviceAnnotations: {}
-    # external-dns.alpha.kubernetes.io/hostname: leader.regatta.example.com
-    # service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "900"
+    service:
+      # -- annotations: Replication server service annotations.
+      annotations: {}
+      # -- type: API service type.
+      type: LoadBalancer
+      # -- clusterIP: specific clusterIP assigned to API service, set to None for headless service.
+      clusterIP: ""
+      # -- externalTrafficPolicy: traffic policy if service type is LoadBalancer.
+      externalTrafficPolicy: Cluster
 
   # -- logCacheSize: The replication server log cache size. 0 means the cache is turned off.
   logCacheSize: 0
@@ -565,3 +557,16 @@ prometheusRules:
   #      annotations:
   #        description: '50 quantile of regatta.v1.KV response time is {{ $value }} s for {{ $labels.job }}'
   #        summary: '{{ $labels.job }}: GRPC response is too slow (P50)'
+
+# -- extraObjects: add extra dynamic manifests via values
+extraObjects: []
+  # - apiVersion: "kubernetes-client.io/v1"
+  #   kind: ExternalSecret
+  #   metadata:
+  #     name: regatta-maintenance-token
+  #     namespace: {{ .Release.Namespace }}
+  #   spec:
+  #     backendType: aws
+  #     data:
+  #       - key: secret-access-key
+  #         name: awssm-secret

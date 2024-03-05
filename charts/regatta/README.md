@@ -1,6 +1,6 @@
 # regatta
 
-![Version: 0.4.2](https://img.shields.io/badge/Version-0.4.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.4.1](https://img.shields.io/badge/AppVersion-0.4.1-informational?style=flat-square)
+![Version: 0.4.3](https://img.shields.io/badge/Version-0.4.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.4.1](https://img.shields.io/badge/AppVersion-0.4.1-informational?style=flat-square)
 
 Regatta is a distributed key-value store. Regatta is designed as easy to deploy, kubernetes friendly with emphasis
 on high read throughput and low operational cost.
@@ -23,12 +23,11 @@ Kubernetes: `>= 1.21.0`
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | additionalPodLabels | object | `{}` | additionalPodLabels: Optional map of additional pod labels |
-| api.externalLoadBalancer | object | `{"annotations":{},"enabled":false,"externalDomain":"regatta.example.com","loadBalancerSourceRanges":[]}` | externalLoadBalancer: If enabled, the Service of type LoadBalancer is created # ref: https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer |
-| api.externalLoadBalancer.annotations | object | `{}` | annotations: Service annotations |
-| api.externalLoadBalancer.enabled | bool | `false` | enabled: true/false |
-| api.externalLoadBalancer.externalDomain | string | `"regatta.example.com"` | externalDomain: External Regatta API domain name |
-| api.externalLoadBalancer.loadBalancerSourceRanges | list | `[]` | loadBalancerSourceRanges: external access whitelist, available on AWS only # ref: https://kubernetes.io/docs/concepts/services-networking/service/#aws-nlb-support |
 | api.port | int | `8443` | port: gRPC API port |
+| api.service.annotations | object | `{}` | annotations: API service annotations. |
+| api.service.clusterIP | string | `"None"` | clusterIP: specific clusterIP assigned to API service, set to None for headless service. |
+| api.service.externalTrafficPolicy | string | `""` | externalTrafficPolicy: traffic policy if service type is LoadBalancer. |
+| api.service.type | string | `"ClusterIP"` | type: API service type. |
 | api.tls.cert | string | `"plaintext server certificate\n"` | cert: TLS cert in plaintext Note: applicable only if `mode: plaintext` |
 | api.tls.issuerRef | object | `{}` | issuerRef: IssuerRef configuration that is passed to the Certificate object   Note: applicable only if `mode: certificate` |
 | api.tls.key | string | `"plaintext server certificate key\n"` | key: TLS key in plaintext Note: applicable only if `mode: plaintext` |
@@ -36,6 +35,7 @@ Kubernetes: `>= 1.21.0`
 | cluster.name | string | `"default"` | default: Cluster name and the label for memberlist. |
 | cluster.port | int | `7432` | port: Memberlist port for incoming cluster coordination comms. |
 | dragonboatSoftSettings | string | `"{\n  \"TaskBatchSize\": 128,\n  \"PerConnectionSendBufSize\": 10485760,\n  \"MaxConcurrentStreamingSnapshot\": 1\n}\n"` | dragonboatSoftSettings: ref: https://github.com/lni/dragonboat/blob/v3.3.6/internal/settings/soft.go#L27 |
+| extraObjects | list | `[]` | extraObjects: add extra dynamic manifests via values |
 | fullnameOverride | string | `""` | fullnameOverride: String to fully override `"regatta.fullname"` |
 | image.imagePullPolicy | string | `"IfNotPresent"` | imagePullPolicy: ref: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy |
 | image.repository | string | `"ghcr.io/jamf/regatta"` | repository: Default image repository |
@@ -80,11 +80,14 @@ Kubernetes: `>= 1.21.0`
 | replication.logCacheSize | int | `0` | logCacheSize: The replication server log cache size. 0 means the cache is turned off. |
 | replication.logRpcTimeout | string | `"5m"` | logRpcTimeout: The log RPC timeout. |
 | replication.maxSnapshotRecvBytesPerSecond | int | `0` | maxSnapshotRecvBytesPerSecond: Maximum number of bytes received per second by the snapshot API client,   default value 0 means unlimited. |
-| replication.server | object | `{"enabled":false,"externalDomain":"leader.regatta.example.com","port":8444,"serviceAnnotations":{}}` | server: The replication server may be used when Regatta is in the leader mode (`mode: leader`).   Follower Regatta replicates data from this server. |
+| replication.server | object | `{"enabled":false,"externalDomain":"leader.regatta.example.com","port":8444,"service":{"annotations":{},"clusterIP":"","externalTrafficPolicy":"Cluster","type":"LoadBalancer"}}` | server: The replication server may be used when Regatta is in the leader mode (`mode: leader`).   Follower Regatta replicates data from this server. |
 | replication.server.enabled | bool | `false` | enabled: Enables the replication server |
 | replication.server.externalDomain | string | `"leader.regatta.example.com"` | externalDomain: |
 | replication.server.port | int | `8444` | port: Replication server port |
-| replication.server.serviceAnnotations | object | `{}` | serviceAnnotations: Replication server LoadBalancer service annotations |
+| replication.server.service.annotations | object | `{}` | annotations: Replication server service annotations. |
+| replication.server.service.clusterIP | string | `""` | clusterIP: specific clusterIP assigned to API service, set to None for headless service. |
+| replication.server.service.externalTrafficPolicy | string | `"Cluster"` | externalTrafficPolicy: traffic policy if service type is LoadBalancer. |
+| replication.server.service.type | string | `"LoadBalancer"` | type: API service type. |
 | replication.tls.ca | string | `"plaintext server ca\n"` | cert: CA in plaintext Note: Applicable only if `mode: plaintext` |
 | replication.tls.cert | string | `"plaintext server certificate\n"` | cert: TLS certificate in plaintext Note: Applicable only if `mode: plaintext` |
 | replication.tls.issuerRef | object | `{}` | issuerRef: issuerRef configuration that is passed to the Certificate object Note: applicable only if `mode: certificate` |
@@ -105,4 +108,4 @@ Kubernetes: `>= 1.21.0`
 | tolerations | list | `[]` | tolerations: Defines tolerations for the Regatta pods # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/ |
 
 ----------------------------------------------
-Autogenerated from chart metadata using [helm-docs v1.12.0](https://github.com/norwoodj/helm-docs/releases/v1.12.0)
+Autogenerated from chart metadata using [helm-docs v1.13.1](https://github.com/norwoodj/helm-docs/releases/v1.13.1)

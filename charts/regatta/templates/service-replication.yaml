@@ -7,12 +7,13 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "regatta.labels" . | nindent 4 }}
-  {{ with .Values.replication.server.serviceAnnotations }}
+  {{ with .Values.replication.server.service.annotations }}
   annotations:
     {{ . | toYaml | nindent 4 }}
   {{ end }}
 spec:
-  type: LoadBalancer
+  type: {{ .Values.replication.server.service.type }}
+  externalTrafficPolicy: {{ .Values.replication.server.service.externalTrafficPolicy }}
   selector:
     {{- include "regatta.selectorLabels" . | nindent 6 }}
   ports:
