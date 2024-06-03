@@ -13,7 +13,7 @@ image:
   # -- imagePullPolicy: ref: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
   imagePullPolicy: IfNotPresent
   # -- tag: Override to use different image version
-  tag: v0.4.1
+  tag: v0.5.1
 
 # -- imagePullSecrets: For the Regatta image
 imagePullSecrets: []
