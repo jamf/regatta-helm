@@ -144,9 +144,6 @@ spec:
           {{- include "regatta.securityContext" . | nindent 10 }}
         {{- end }}
         volumeMounts:
-        - mountPath: /dragonboat-soft-settings.json
-          name: config
-          subPath: dragonboat-soft-settings.json
         - mountPath: /api-cert
           name: api-cert
         {{- if or .Values.replication.server.enabled (eq .Values.mode "follower") }}
@@ -168,9 +165,6 @@ spec:
           sizeLimit: {{ .sizeLimit }}
           {{- end }}
       {{- end }}
-      - name: config
-        configMap:
-          name: {{ template "regatta.name" . }}-config
       - name: api-cert
         secret:
           defaultMode: 420

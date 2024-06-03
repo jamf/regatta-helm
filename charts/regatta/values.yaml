@@ -356,13 +356,6 @@ raft:
   # --  snapshotRecoveryType is the implementation of internal Raft snapshotting mechanism. Options are snapshot (legacy) or checkpoint (default).
   snapshotRecoveryType: checkpoint
 
-# -- dragonboatSoftSettings: ref: https://github.com/lni/dragonboat/blob/v3.3.6/internal/settings/soft.go#L27
-dragonboatSoftSettings: |
-  {
-    "TaskBatchSize": 128,
-    "PerConnectionSendBufSize": 10485760,
-    "MaxConcurrentStreamingSnapshot": 1
-  }
 # Temp folder configuration
 temp:
   # -- enabled: Set to true to enable tmp EmptyDir.
