@@ -47,12 +47,19 @@ spec:
             fieldRef:
               fieldPath: status.podIP
         {{- if .Values.maintenance.enabled }}
-        - name: TOKEN
+        - name: MAINTENANCE_TOKEN
           valueFrom:
             secretKeyRef:
               name: {{ template "regatta.name" . }}-maintenance-token
               key: token
         {{- end }}
+        {{- if .Values.tables.enabled }}
+        - name: TABLES_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "regatta.name" . }}-tables-token
+              key: token
+          {{- end }}
         command:
         - "sh"
         - "-c"
@@ -65,6 +72,12 @@ spec:
           --memberlist.members=dnssrv+{{ template "regatta.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
           --api.address=https://0.0.0.0:{{ .Values.api.port }}
           --api.advertise-address=https://$(POD_IP):{{ .Values.api.port }}
+          --api.allowed-cn={{ .Values.api.tls.allowedCN }}
+          --api.allowed-hostname={{ .Values.api.tls.allowedHostname }}
+          --api.client-cert-auth={{ .Values.api.tls.clientCertAuth }}
+          --api.max-concurrent-connections={{ .Values.api.maxConnections }}
+          --api.max-concurrent-streams={{ .Values.api.maxStreams }}
+          --api.stream-workers={{ .Values.api.workers }}
           --api.cert-filename=/api-cert/tls.crt
           --api.key-filename=/api-cert/tls.key
           --rest.address=http://0.0.0.0:{{ .Values.metricsPort }}
@@ -86,7 +99,6 @@ spec:
           --raft.max-send-queue-size={{ .Values.raft.maxSendQueueSize | int64 }}
           --storage.block-cache-size={{ .Values.storage.blockCacheSize | int64 }}
         {{- if eq .Values.mode "leader" }}
-          --tables.names={{ .Values.tables }}
           --replication.enabled={{ .Values.replication.server.enabled }}
         {{- if .Values.replication.server.enabled }}
           --replication.address=https://$(POD_IP):{{ .Values.replication.server.port }}
@@ -105,7 +117,16 @@ spec:
         {{- end }}
           --maintenance.enabled={{ .Values.maintenance.enabled }}
         {{- if .Values.maintenance.enabled }}
-          --maintenance.token=$(TOKEN)
+          --maintenance.token=$(MAINTENANCE_TOKEN)
+        {{- end }}
+          --tables.enabled={{ .Values.tables.enabled }}
+        {{- if .Values.tables.enabled }}
+          --tables.token=$(TABLES_TOKEN)
+        {{- end }}
+        {{- if .Values.extraArgs }}
+        {{- range $key, $value := .Values.extraArgs }}
+          --{{ $key }}={{ $value }}
+        {{- end }}
         {{- end }}
         ports:
         - name: cluster
@@ -144,9 +165,6 @@ spec:
           {{- include "regatta.securityContext" . | nindent 10 }}
         {{- end }}
         volumeMounts:
-        - mountPath: /dragonboat-soft-settings.json
-          name: config
-          subPath: dragonboat-soft-settings.json
         - mountPath: /api-cert
           name: api-cert
         {{- if or .Values.replication.server.enabled (eq .Values.mode "follower") }}
@@ -168,9 +186,6 @@ spec:
           sizeLimit: {{ .sizeLimit }}
           {{- end }}
       {{- end }}
-      - name: config
-        configMap:
-          name: {{ template "regatta.name" . }}-config
       - name: api-cert
         secret:
           defaultMode: 420

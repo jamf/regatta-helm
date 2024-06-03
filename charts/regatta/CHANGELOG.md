@@ -1,5 +1,13 @@
 # Changelog
 ---
+## v0.5.0
+
+### Improvements
+* Bump to v0.5.1 regatta server version.
+* Remove the dragonboat settings.
+* Add additional options to API service.
+
+---
 ## v0.4.3
 
 ### Improvements
