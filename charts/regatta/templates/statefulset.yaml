@@ -65,6 +65,12 @@ spec:
           --memberlist.members=dnssrv+{{ template "regatta.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
           --api.address=https://0.0.0.0:{{ .Values.api.port }}
           --api.advertise-address=https://$(POD_IP):{{ .Values.api.port }}
+          --api.allowed-cn={{ .Values.api.tls.allowedCN }}
+          --api.allowed-hostname={{ .Values.api.tls.allowedHostname }}
+          --api.client-cert-auth={{ .Values.api.tls.clientCertAuth }}
+          --api.max-concurrent-connections={{ .Values.api.maxConnections }}
+          --api.max-concurrent-streams={{ .Values.api.maxStreams }}
+          --api.stream-workers={{ .Values.api.workers }}
           --api.cert-filename=/api-cert/tls.crt
           --api.key-filename=/api-cert/tls.key
           --rest.address=http://0.0.0.0:{{ .Values.metricsPort }}
@@ -86,7 +92,6 @@ spec:
           --raft.max-send-queue-size={{ .Values.raft.maxSendQueueSize | int64 }}
           --storage.block-cache-size={{ .Values.storage.blockCacheSize | int64 }}
         {{- if eq .Values.mode "leader" }}
-          --tables.names={{ .Values.tables }}
           --replication.enabled={{ .Values.replication.server.enabled }}
         {{- if .Values.replication.server.enabled }}
           --replication.address=https://$(POD_IP):{{ .Values.replication.server.port }}
@@ -106,6 +111,15 @@ spec:
           --maintenance.enabled={{ .Values.maintenance.enabled }}
         {{- if .Values.maintenance.enabled }}
           --maintenance.token=$(TOKEN)
+        {{- end }}
+          --tables.enabled={{ .Values.tables.enabled }}
+        {{- if .Values.tables.enabled }}
+          --tables.token=$(TOKEN)
+        {{- end }}
+        {{- if .Values.extraArgs }}
+        {{- range $key, $value := .Values.extraArgs }}
+          --{{ $key }}={{ $value }}
+        {{- end }}
         {{- end }}
         ports:
         - name: cluster
