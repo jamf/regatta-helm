@@ -47,12 +47,19 @@ spec:
             fieldRef:
               fieldPath: status.podIP
         {{- if .Values.maintenance.enabled }}
-        - name: TOKEN
+        - name: MAINTENANCE_TOKEN
           valueFrom:
             secretKeyRef:
               name: {{ template "regatta.name" . }}-maintenance-token
               key: token
         {{- end }}
+        {{- if .Values.tables.enabled }}
+        - name: TABLES_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "regatta.name" . }}-tables-token
+              key: token
+          {{- end }}
         command:
         - "sh"
         - "-c"
@@ -110,11 +117,11 @@ spec:
         {{- end }}
           --maintenance.enabled={{ .Values.maintenance.enabled }}
         {{- if .Values.maintenance.enabled }}
-          --maintenance.token=$(TOKEN)
+          --maintenance.token=$(MAINTENANCE_TOKEN)
         {{- end }}
           --tables.enabled={{ .Values.tables.enabled }}
         {{- if .Values.tables.enabled }}
-          --tables.token=$(TOKEN)
+          --tables.token=$(TABLES_TOKEN)
         {{- end }}
         {{- if .Values.extraArgs }}
         {{- range $key, $value := .Values.extraArgs }}
